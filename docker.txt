@@ -1,1 +1,12 @@
-docker run -it --rm -v D:/NWPU/compiler/cereal-compiler/PKUminic:/root/compiler maxxing/compiler-dev bash
+
+调试运行
+docker run -it --rm -v D:/NWPU/compiler/cereal-compiler:/root/compiler maxxing/compiler-dev bash
+
+本地测试
+docker run -it --rm -v D:/NWPU/compiler/cereal-compiler/PKUminic:/root/compiler maxxing/compiler-dev autotest -koopa -s lv1 /root/compiler
+
+docker run -it --rm -v D:/NWPU/compiler/cereal-compiler/PKUminic:/root/compiler maxxing/compiler-dev autotest -riscv -s lv1 /root/compiler
+
+Complier Explorer网站翻译
+在网站右侧的汇编输出窗口选择使用 “RISC-V rv32gc clang (trunk)” 编译器,
+ 然后将编译选项设置为 -O3 -g0, 并查看窗口内的汇编输出.

@@ -66,7 +66,7 @@
 
 
 /* First part of user prologue.  */
-#line 6 "/root/compiler/src/sysy.y"
+#line 6 "/root/compiler/PKUminic/src/sysy.y"
 
 #include "../include/ast.h"
 #include <iostream>
@@ -80,7 +80,7 @@ void yyerror(std::unique_ptr<BaseAST> &ast, const char *s);
 using namespace std;
 
 
-#line 84 "/root/compiler/build/sysy.tab.cpp"
+#line 84 "/root/compiler/PKUminic/build/sysy.tab.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -113,8 +113,8 @@ using namespace std;
 
 /* Use api.header.include to #include this header
    instead of duplicating it here.  */
-#ifndef YY_YY_ROOT_COMPILER_BUILD_SYSY_TAB_HPP_INCLUDED
-# define YY_YY_ROOT_COMPILER_BUILD_SYSY_TAB_HPP_INCLUDED
+#ifndef YY_YY_ROOT_COMPILER_PKUMINIC_BUILD_SYSY_TAB_HPP_INCLUDED
+# define YY_YY_ROOT_COMPILER_PKUMINIC_BUILD_SYSY_TAB_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -123,13 +123,13 @@ using namespace std;
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "/root/compiler/src/sysy.y"
+#line 1 "/root/compiler/PKUminic/src/sysy.y"
  
     #include <memory>
     #include <string>
     #include "../include/ast.h"
 
-#line 133 "/root/compiler/build/sysy.tab.cpp"
+#line 133 "/root/compiler/PKUminic/build/sysy.tab.cpp"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -137,9 +137,10 @@ extern int yydebug;
   enum yytokentype
   {
     INT = 258,
-    RETURN = 259,
-    IDENT = 260,
-    INT_CONST = 261
+    VOID = 259,
+    RETURN = 260,
+    IDENT = 261,
+    INT_CONST = 262
   };
 #endif
 
@@ -147,13 +148,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 23 "/root/compiler/src/sysy.y"
+#line 23 "/root/compiler/PKUminic/src/sysy.y"
 
     std::string *str_val;
     int int_val;
     BaseAST *ast_val;
 
-#line 157 "/root/compiler/build/sysy.tab.cpp"
+#line 158 "/root/compiler/PKUminic/build/sysy.tab.cpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -166,7 +167,7 @@ extern YYSTYPE yylval;
 
 int yyparse (std::unique_ptr<BaseAST> &ast);
 
-#endif /* !YY_YY_ROOT_COMPILER_BUILD_SYSY_TAB_HPP_INCLUDED  */
+#endif /* !YY_YY_ROOT_COMPILER_PKUMINIC_BUILD_SYSY_TAB_HPP_INCLUDED  */
 
 
 
@@ -470,21 +471,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  5
+#define YYFINAL  6
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   10
+#define YYLAST   16
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  12
+#define YYNTOKENS  13
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  7
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  7
+#define YYNRULES  8
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  17
+#define YYNSTATES  18
 
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   261
+#define YYMAXUTOK   262
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -500,15 +501,15 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       7,     8,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    11,
+       8,     9,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    12,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     9,     2,    10,     2,     2,     2,     2,
+       2,     2,     2,    10,     2,    11,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -522,14 +523,14 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6
+       5,     6,     7
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    39,    39,    47,    56,    63,    70,    77
+       0,    40,    40,    48,    57,    63,    70,    77,    96
 };
 #endif
 
@@ -538,9 +539,9 @@ static const yytype_int8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "INT", "RETURN", "IDENT", "INT_CONST",
-  "'('", "')'", "'{'", "'}'", "';'", "$accept", "CompUnit", "FuncDef",
-  "FuncType", "Block", "Stmt", "Number", YY_NULLPTR
+  "$end", "error", "$undefined", "INT", "VOID", "RETURN", "IDENT",
+  "INT_CONST", "'('", "')'", "'{'", "'}'", "';'", "$accept", "CompUnit",
+  "FuncDef", "FuncType", "Block", "Stmt", "Number", YY_NULLPTR
 };
 #endif
 
@@ -549,12 +550,12 @@ static const char *const yytname[] =
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_int16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,   260,   261,    40,    41,   123,
-     125,    59
+       0,   256,   257,   258,   259,   260,   261,   262,    40,    41,
+     123,   125,    59
 };
 # endif
 
-#define YYPACT_NINF (-7)
+#define YYPACT_NINF (-6)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -568,8 +569,8 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -3,    -7,     1,    -7,    -2,    -7,    -5,    -4,    -1,     2,
-      -7,     3,     0,    -7,    -6,    -7,    -7
+      -3,    -6,    -6,     2,    -6,    -2,    -6,    -5,    -4,    -1,
+       1,    -6,     0,     3,    -6,     4,    -6,    -6
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -577,20 +578,20 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     4,     0,     2,     0,     1,     0,     0,     0,     0,
-       3,     0,     0,     7,     0,     5,     6
+       0,     4,     5,     0,     2,     0,     1,     0,     0,     0,
+       0,     3,     0,     0,     8,     0,     6,     7
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -7,    -7,    -7,    -7,    -7,    -7,    -7
+      -6,    -6,    -6,    -6,    -6,    -6,    -6
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3,     4,    10,    12,    14
+      -1,     3,     4,     5,    11,    13,    15
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -598,34 +599,34 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       1,     5,     7,     6,     8,    16,    11,     0,     9,    13,
-      15
+       1,     2,     6,     8,     7,     9,    12,    14,     0,    10,
+       0,     0,     0,     0,    16,     0,    17
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     0,     7,     5,     8,    11,     4,    -1,     9,     6,
-      10
+       3,     4,     0,     8,     6,     9,     5,     7,    -1,    10,
+      -1,    -1,    -1,    -1,    11,    -1,    12
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,    13,    14,    15,     0,     5,     7,     8,     9,
-      16,     4,    17,     6,    18,    10,    11
+       0,     3,     4,    14,    15,    16,     0,     6,     8,     9,
+      10,    17,     5,    18,     7,    19,    11,    12
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    12,    13,    14,    15,    16,    17,    18
+       0,    13,    14,    15,    16,    16,    17,    18,    19
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     5,     1,     3,     3,     1
+       0,     2,     1,     5,     1,     1,     3,     3,     1
 };
 
 
@@ -1323,17 +1324,17 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 39 "/root/compiler/src/sysy.y"
+#line 40 "/root/compiler/PKUminic/src/sysy.y"
              {
         auto comp_unit = make_unique<CompUnitAST>();
         comp_unit->func_def = unique_ptr<BaseAST>((yyvsp[0].ast_val));
         ast = move(comp_unit);
     }
-#line 1333 "/root/compiler/build/sysy.tab.cpp"
+#line 1334 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 3:
-#line 47 "/root/compiler/src/sysy.y"
+#line 48 "/root/compiler/PKUminic/src/sysy.y"
                                   {
         auto ast = new FuncDefAST();
         ast->func_type = unique_ptr<BaseAST>((yyvsp[-4].ast_val));
@@ -1341,49 +1342,59 @@ yyreduce:
         ast->block = unique_ptr<BaseAST>((yyvsp[0].ast_val));
         (yyval.ast_val) = ast;
     }
-#line 1345 "/root/compiler/build/sysy.tab.cpp"
+#line 1346 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 4:
-#line 56 "/root/compiler/src/sysy.y"
+#line 57 "/root/compiler/PKUminic/src/sysy.y"
          {
         auto ast = new FuncTypeAST();
         ast->functype = "int";
         (yyval.ast_val) = ast;
     }
-#line 1355 "/root/compiler/build/sysy.tab.cpp"
+#line 1356 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 5:
-#line 63 "/root/compiler/src/sysy.y"
+#line 63 "/root/compiler/PKUminic/src/sysy.y"
+        {
+        auto ast = new FuncTypeAST();
+        ast->functype = "void";
+        (yyval.ast_val) = ast;
+    }
+#line 1366 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 6:
+#line 70 "/root/compiler/PKUminic/src/sysy.y"
                   {
         auto ast = new BlockAST();
         ast->stmt = unique_ptr<BaseAST>((yyvsp[-1].ast_val));
         (yyval.ast_val) = ast;
     }
-#line 1365 "/root/compiler/build/sysy.tab.cpp"
+#line 1376 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 6:
-#line 70 "/root/compiler/src/sysy.y"
+  case 7:
+#line 77 "/root/compiler/PKUminic/src/sysy.y"
                        {
         auto ast = new StmtAST();
         ast->number =((yyvsp[-1].int_val));
         (yyval.ast_val) = ast;
     }
-#line 1375 "/root/compiler/build/sysy.tab.cpp"
+#line 1386 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 7:
-#line 77 "/root/compiler/src/sysy.y"
+  case 8:
+#line 96 "/root/compiler/PKUminic/src/sysy.y"
                 {
         (yyval.int_val) = ((yyvsp[0].int_val));
     }
-#line 1383 "/root/compiler/build/sysy.tab.cpp"
+#line 1394 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
 
-#line 1387 "/root/compiler/build/sysy.tab.cpp"
+#line 1398 "/root/compiler/PKUminic/build/sysy.tab.cpp"
 
       default: break;
     }
@@ -1615,7 +1626,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 80 "/root/compiler/src/sysy.y"
+#line 99 "/root/compiler/PKUminic/src/sysy.y"
 
 
 

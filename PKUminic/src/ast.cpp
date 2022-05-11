@@ -1,39 +1,47 @@
 #include "../include/ast.h"
 #include <iostream>
 
+using namespace std;
+
+
 // ==================== CompUnitAST  Class ====================
-void CompUnitAST::Dump() const{
-    std::cout << "CompUnitAST { ";
-    func_def->Dump();
-    std::cout << " }";
+string CompUnitAST::Dump() const{
+    string retstr ;
+    // retstr = "Koopa IR: \n";
+    retstr = retstr + func_def->Dump();
+    return retstr;
 }
 
 // ==================== FuncDefAST  Class ====================
-void FuncDefAST::Dump() const {
-    std::cout << "FuncDefAST { ";
-    func_type->Dump();
-    std::cout << ", " << ident << ", ";
-    block->Dump();
-    std::cout << " }";
+string FuncDefAST::Dump() const {
+    string retstr ;
+    retstr = "fun @" + ident + "(): ";
+    retstr = retstr + func_type->Dump();
+    retstr = retstr + "{\n";
+    retstr = retstr + block->Dump();
+    retstr = retstr + "}";
+    return retstr;
 }
 
 // ==================== FuncTypeAST  Class ====================
-void FuncTypeAST::Dump() const {
-    std::cout << "FuncTypeAST { ";
-    std::cout << "int ";
-    std::cout << " }";
+string FuncTypeAST::Dump() const {
+    string retstr ;
+    if(functype == "int") retstr = "i32 ";
+    else retstr = " ";
+    return retstr;
 }
 
 // ==================== BlockAST  Class ====================
-void BlockAST::Dump() const {
-    std::cout << "BlockAST { ";
-    stmt->Dump();
-    std::cout << " }";
+string BlockAST::Dump() const {
+    string retstr ;
+    retstr = "%entry: \n" + stmt->Dump() + "\n";
+    return retstr;
 }
 
 // ==================== StmtAST  Class ====================
-void StmtAST::Dump() const {
-    std::cout << "StmtAST { ";
-    std::cout <<" "<< number <<" ";
-    std::cout << " }";
+string StmtAST::Dump() const {
+    string retstr ;
+    retstr = "  ret ";
+    retstr.append(to_string(number));
+    return retstr;
 }

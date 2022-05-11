@@ -1,6 +1,6 @@
-#line 2 "/root/compiler/build/sysy.lex.cpp"
+#line 2 "/root/compiler/PKUminic/build/sysy.lex.cpp"
 
-#line 4 "/root/compiler/build/sysy.lex.cpp"
+#line 4 "/root/compiler/PKUminic/build/sysy.lex.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -355,8 +355,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 10
-#define YY_END_OF_BUFFER 11
+#define YY_NUM_RULES 14
+#define YY_END_OF_BUFFER 15
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -364,11 +364,13 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[30] =
+static const flex_int16_t yy_accept[43] =
     {   0,
-        1,    1,   11,    9,    1,    1,    9,    7,    6,    5,
-        5,    5,    1,    0,    7,    0,    6,    5,    5,    5,
-        0,    2,    8,    3,    5,    5,    5,    4,    0
+        4,    4,    0,    0,   15,   13,    4,    4,   13,   11,
+       10,    9,    9,    9,    9,    3,    3,    3,    4,    1,
+        0,   11,    0,   10,    9,    9,    9,    9,    3,    3,
+        2,    0,    5,   12,    6,    9,    9,    9,    7,    9,
+        8,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -377,16 +379,16 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    2,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    4,    5,    6,    6,
-        6,    6,    6,    6,    6,    7,    7,    1,    1,    1,
-        1,    1,    1,    1,    8,    8,    8,    8,    8,    8,
-        9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
-        9,    9,    9,    9,    9,    9,    9,   10,    9,    9,
-        1,    1,    1,    1,    9,    1,    8,    8,    8,    8,
+        1,    4,    1,    1,    1,    1,    5,    6,    7,    7,
+        7,    7,    7,    7,    7,    8,    8,    1,    1,    1,
+        1,    1,    1,    1,    9,    9,    9,    9,    9,    9,
+       10,   10,   10,   10,   10,   10,   10,   10,   10,   10,
+       10,   10,   10,   10,   10,   10,   10,   11,   10,   10,
+        1,    1,    1,    1,   10,    1,    9,    9,    9,   12,
 
-       11,    8,    9,    9,   12,    9,    9,    9,    9,   13,
-        9,    9,    9,   14,    9,   15,   16,    9,    9,   10,
-        9,    9,    1,    1,    1,    1,    1,    1,    1,    1,
+       13,    9,   10,   10,   14,   10,   10,   10,   10,   15,
+       16,   10,   10,   17,   10,   18,   19,   20,   10,   11,
+       10,   10,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -403,50 +405,60 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[17] =
+static const YY_CHAR yy_meta[21] =
     {   0,
-        1,    1,    1,    1,    2,    2,    3,    4,    5,    6,
-        4,    5,    5,    5,    5,    5
+        1,    1,    1,    2,    1,    3,    3,    4,    5,    6,
+        7,    5,    5,    6,    6,    6,    6,    6,    6,    6
     } ;
 
-static const flex_int16_t yy_base[35] =
+static const flex_int16_t yy_base[50] =
     {   0,
-        0,    0,   54,   55,   15,   17,   49,   42,    0,    0,
-       38,   39,   19,   46,   18,    0,    0,    0,   33,   32,
-       43,   55,    0,    0,   12,   13,   13,    0,   55,   23,
-       28,   30,   36,   41
+        0,    0,   18,   20,   85,   86,   23,   25,   25,   73,
+        0,    0,   68,   69,   65,   77,   76,   73,   29,   86,
+       74,   27,    0,    0,    0,   58,   57,   60,   70,   69,
+       86,   68,   86,    0,    0,   36,   33,   27,    0,   28,
+        0,   86,   34,   39,   44,   46,   53,   60,   65
     } ;
 
-static const flex_int16_t yy_def[35] =
+static const flex_int16_t yy_def[50] =
     {   0,
-       29,    1,   29,   29,   29,   29,   29,   30,   31,   32,
-       32,   32,   29,   33,   29,   34,   31,   32,   32,   32,
-       33,   29,   34,   32,   32,   32,   32,   32,    0,   29,
-       29,   29,   29,   29
+       42,    1,   43,   43,   42,   42,   42,   42,   42,   44,
+       45,   46,   46,   46,   46,   47,   47,   42,   42,   42,
+       48,   42,   49,   45,   46,   46,   46,   46,   47,   47,
+       42,   48,   42,   49,   46,   46,   46,   46,   46,   46,
+       46,    0,   42,   42,   42,   42,   42,   42,   42
     } ;
 
-static const flex_int16_t yy_nxt[72] =
+static const flex_int16_t yy_nxt[107] =
     {   0,
-        4,    5,    6,    7,    8,    9,    9,   10,   10,   10,
-       10,   11,   10,   12,   10,   10,   13,   13,   13,   13,
-       13,   13,   15,   15,   15,   28,   27,   26,   15,   17,
-       17,   18,   18,   18,   18,   18,   21,   21,   21,   21,
-       21,   21,   23,   23,   23,   22,   25,   24,   22,   20,
-       19,   16,   14,   29,    3,   29,   29,   29,   29,   29,
-       29,   29,   29,   29,   29,   29,   29,   29,   29,   29,
-       29
+        6,    7,    8,    6,    9,   10,   11,   11,   12,   12,
+       12,   12,   12,   13,   12,   12,   14,   12,   12,   15,
+       17,   18,   17,   18,   19,   19,   19,   19,   20,   21,
+       19,   19,   22,   22,   16,   16,   16,   16,   16,   16,
+       16,   22,   41,   40,   39,   22,   24,   24,   25,   25,
+       25,   25,   25,   29,   38,   29,   29,   29,   29,   29,
+       32,   32,   32,   32,   32,   32,   32,   34,   34,   34,
+       33,   30,   30,   37,   36,   35,   33,   31,   30,   30,
+       28,   27,   26,   23,   42,    5,   42,   42,   42,   42,
+       42,   42,   42,   42,   42,   42,   42,   42,   42,   42,
+
+       42,   42,   42,   42,   42,   42
     } ;
 
-static const flex_int16_t yy_chk[72] =
+static const flex_int16_t yy_chk[107] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    5,    5,    6,    6,
-       13,   13,   15,   15,   30,   27,   26,   25,   30,   31,
-       31,   32,   32,   32,   32,   32,   33,   33,   33,   33,
-       33,   33,   34,   34,   34,   21,   20,   19,   14,   12,
-       11,    8,    7,    3,   29,   29,   29,   29,   29,   29,
-       29,   29,   29,   29,   29,   29,   29,   29,   29,   29,
-       29
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        3,    3,    4,    4,    7,    7,    8,    8,    9,    9,
+       19,   19,   22,   22,   43,   43,   43,   43,   43,   43,
+       43,   44,   40,   38,   37,   44,   45,   45,   46,   46,
+       46,   46,   46,   47,   36,   47,   47,   47,   47,   47,
+       48,   48,   48,   48,   48,   48,   48,   49,   49,   49,
+       32,   30,   29,   28,   27,   26,   21,   18,   17,   16,
+       15,   14,   13,   10,    5,   42,   42,   42,   42,   42,
+       42,   42,   42,   42,   42,   42,   42,   42,   42,   42,
+
+       42,   42,   42,   42,   42,   42
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -463,22 +475,25 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/root/compiler/src/sysy.l"
+#line 1 "/root/compiler/PKUminic/src/sysy.l"
 #define YY_NO_INPUT 1
-#line 6 "/root/compiler/src/sysy.l"
+
+#line 7 "/root/compiler/PKUminic/src/sysy.l"
 #include <cstdlib>
 #include <string>
 
 #include "sysy.tab.hpp"
 
 using namespace std;
-#line 476 "/root/compiler/build/sysy.lex.cpp"
+#line 489 "/root/compiler/PKUminic/build/sysy.lex.cpp"
 /* 空白符和注释 */
 /* 标识符 */
 /* 整数字面量 */
-#line 480 "/root/compiler/build/sysy.lex.cpp"
+/* 第一个为多行注释 */
+#line 494 "/root/compiler/PKUminic/build/sysy.lex.cpp"
 
 #define INITIAL 0
+#define COMMENT 1
 
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
@@ -691,9 +706,9 @@ YY_DECL
 		}
 
 	{
-#line 25 "/root/compiler/src/sysy.l"
+#line 26 "/root/compiler/PKUminic/src/sysy.l"
 
-#line 697 "/root/compiler/build/sysy.lex.cpp"
+#line 712 "/root/compiler/PKUminic/build/sysy.lex.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -720,13 +735,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 30 )
+				if ( yy_current_state >= 43 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 55 );
+		while ( yy_base[yy_current_state] != 86 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -751,60 +766,85 @@ do_action:	/* This label is used only to access EOF actions. */
 			goto yy_find_action;
 
 case 1:
-/* rule 1 can match eol */
 YY_RULE_SETUP
-#line 26 "/root/compiler/src/sysy.l"
-{}
+#line 27 "/root/compiler/PKUminic/src/sysy.l"
+{BEGIN(COMMENT);/* 多行注释忽略, 不做任何操作 */}
 	YY_BREAK
 case 2:
+YY_RULE_SETUP
+#line 28 "/root/compiler/PKUminic/src/sysy.l"
+{BEGIN(INITIAL);}
+	YY_BREAK
+case 3:
+/* rule 3 can match eol */
+YY_RULE_SETUP
+#line 29 "/root/compiler/PKUminic/src/sysy.l"
+
+	YY_BREAK
+case YY_STATE_EOF(COMMENT):
+#line 30 "/root/compiler/PKUminic/src/sysy.l"
+{printf("Unterminated comment\n"); return 0;}
+	YY_BREAK
+case 4:
+/* rule 4 can match eol */
+YY_RULE_SETUP
+#line 32 "/root/compiler/PKUminic/src/sysy.l"
+{/* 空白符忽略, 不做任何操作 */}
+	YY_BREAK
+case 5:
 *yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 27 "/root/compiler/src/sysy.l"
-{}
-	YY_BREAK
-case 3:
-YY_RULE_SETUP
-#line 29 "/root/compiler/src/sysy.l"
-{return INT;}
-	YY_BREAK
-case 4:
-YY_RULE_SETUP
-#line 30 "/root/compiler/src/sysy.l"
-{return RETURN;}
-	YY_BREAK
-case 5:
-YY_RULE_SETUP
-#line 32 "/root/compiler/src/sysy.l"
-{ yylval.str_val = new string(yytext); return IDENT; }
+#line 33 "/root/compiler/PKUminic/src/sysy.l"
+{/* 单行注释忽略, 不做任何操作 */}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 34 "/root/compiler/src/sysy.l"
-{ yylval.int_val = strtol(yytext, nullptr, 0); return INT_CONST; }
+#line 36 "/root/compiler/PKUminic/src/sysy.l"
+{return INT;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 35 "/root/compiler/src/sysy.l"
-{ yylval.int_val = strtol(yytext, nullptr, 0); return INT_CONST; }
+#line 37 "/root/compiler/PKUminic/src/sysy.l"
+{return VOID;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 36 "/root/compiler/src/sysy.l"
-{ yylval.int_val = strtol(yytext, nullptr, 0); return INT_CONST; }
+#line 38 "/root/compiler/PKUminic/src/sysy.l"
+{return RETURN;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 38 "/root/compiler/src/sysy.l"
-{ return yytext[0]; }
+#line 40 "/root/compiler/PKUminic/src/sysy.l"
+{ yylval.str_val = new string(yytext); return IDENT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 39 "/root/compiler/src/sysy.l"
+#line 42 "/root/compiler/PKUminic/src/sysy.l"
+{ yylval.int_val = strtol(yytext, nullptr, 0); return INT_CONST; }
+	YY_BREAK
+case 11:
+YY_RULE_SETUP
+#line 43 "/root/compiler/PKUminic/src/sysy.l"
+{ yylval.int_val = strtol(yytext, nullptr, 0); return INT_CONST; }
+	YY_BREAK
+case 12:
+YY_RULE_SETUP
+#line 44 "/root/compiler/PKUminic/src/sysy.l"
+{ yylval.int_val = strtol(yytext, nullptr, 0); return INT_CONST; }
+	YY_BREAK
+case 13:
+YY_RULE_SETUP
+#line 46 "/root/compiler/PKUminic/src/sysy.l"
+{ return yytext[0]; }
+	YY_BREAK
+case 14:
+YY_RULE_SETUP
+#line 47 "/root/compiler/PKUminic/src/sysy.l"
 ECHO;
 	YY_BREAK
-#line 808 "/root/compiler/build/sysy.lex.cpp"
+#line 848 "/root/compiler/PKUminic/build/sysy.lex.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1101,7 +1141,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 30 )
+			if ( yy_current_state >= 43 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1129,11 +1169,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 30 )
+		if ( yy_current_state >= 43 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 29);
+	yy_is_jam = (yy_current_state == 42);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -1772,5 +1812,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 39 "/root/compiler/src/sysy.l"
+#line 47 "/root/compiler/PKUminic/src/sysy.l"
 

@@ -21,18 +21,20 @@ using namespace std;
 
 // yylval 的定义, 定义成了一个联合体 (union)
 %union {
+    int key_op;
     std::string *str_val;
     int int_val;
     BaseAST *ast_val;
 }
 
-
-%token INT RETURN
+%token <key_op> ADD SUB NOT
+%token INT VOID RETURN 
 %token <str_val> IDENT
 %token <int_val> INT_CONST
 
 %type <ast_val> FuncDef FuncType Block Stmt
-%type <int_val> Number
+%type <int_val> Number Exp UnaryExp PrimaryExp UnaryOp 
+/* %type <int_val> Exp AddExp MulExp */
 
 %%
 CompUnit
@@ -57,6 +59,12 @@ FuncType
         auto ast = new FuncTypeAST();
         ast->functype = "int";
         $$ = ast;
+    }
+    |
+    VOID{
+        auto ast = new FuncTypeAST();
+        ast->functype = "void";
+        $$ = ast;
     };
 
 Block
@@ -67,16 +75,36 @@ Block
     };
 
 Stmt
-    : RETURN Number ';'{
+    : RETURN Exp ';'{
         auto ast = new StmtAST();
         ast->number =($2);
         $$ = ast;
     };
+ 
+Exp
+    : UnaryExp{
+
+    };
+
+PrimaryExp
+    : '(' Exp ')'
+    | Number;
+
+
+UnaryExp
+    : PrimaryExp | UnaryOp UnaryExp;
+
+
 
 Number
     : INT_CONST {
         $$ = ($1);
     };
+
+UnaryOp
+    : ADD
+    | SUB
+    | NOT;
 %%
 
 
