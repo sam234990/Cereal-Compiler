@@ -2,5 +2,5 @@
 *.code-workspace
 accompanying learning
 .vscode
-docker.txt
-result.txt
+*.txt
+PKUminc/koopatest
