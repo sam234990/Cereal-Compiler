@@ -1,0 +1,11 @@
+/root/compiler/PKUminic/build/ast.cpp.o: \
+  /root/compiler/PKUminic/src/ast.cpp \
+  /root/compiler/PKUminic/src/../include/ast.h \
+  /root/compiler/PKUminic/build/sysy.tab.hpp \
+  /root/compiler/PKUminic/build/../include/ast.h
+
+/root/compiler/PKUminic/src/../include/ast.h:
+
+/root/compiler/PKUminic/build/sysy.tab.hpp:
+
+/root/compiler/PKUminic/build/../include/ast.h:
