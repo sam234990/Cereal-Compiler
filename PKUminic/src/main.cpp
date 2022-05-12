@@ -35,12 +35,12 @@ int main(int argc, char const *argv[])
 
     //遍历抽象语法树返回字符串形式的Koopa IR
     string irstr;
-    irstr = ast->Dump();
+    ast->Dump(irstr);
     // cout << irstr << endl;
 
     if (string(mode) == "-koopa")
     {//输出为koopa模式
-        cout << mode << endl;
+        cout << irstr << endl;
         //写入对应文件
         write_file(output, irstr);
         return 0;

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void koopa_ir_from_str(string irstr, std::ostream& outfile)
+void koopa_ir_from_str(string irstr, std::ostream &outfile)
 {
     const char *str = irstr.c_str();
 
@@ -28,7 +28,7 @@ void koopa_ir_from_str(string irstr, std::ostream& outfile)
 
     // 处理 raw program
     // 遍历raw
-    Visit(raw, outfile);
+    // Visit(raw, outfile);
 
     // 处理完成, 释放 raw program builder 占用的内存
     // 注意, raw program 中所有的指针指向的内存均为 raw program builder 的内存
@@ -37,11 +37,11 @@ void koopa_ir_from_str(string irstr, std::ostream& outfile)
 }
 
 // 访问 raw program
-void Visit(const koopa_raw_program_t &program, std::ostream& outfile)
+void Visit(const koopa_raw_program_t &program, std::ostream &outfile)
 {
     // 执行一些其他的必要操作
-    cout <<"  .text"<<endl;
-    outfile <<"  .text"<<endl;
+    cout << "  .text" << endl;
+    outfile << "  .text" << endl;
 
     // 访问所有全局变量
     Visit(program.values, outfile);
@@ -50,7 +50,7 @@ void Visit(const koopa_raw_program_t &program, std::ostream& outfile)
 }
 
 // 访问 raw slice ---- 通用的处理函数
-void Visit(const koopa_raw_slice_t &slice, std::ostream& outfile)
+void Visit(const koopa_raw_slice_t &slice, std::ostream &outfile)
 {
     for (size_t i = 0; i < slice.len; ++i)
     {
@@ -82,15 +82,15 @@ void Visit(const koopa_raw_slice_t &slice, std::ostream& outfile)
 }
 
 // 访问函数
-void Visit(const koopa_raw_function_t &func, std::ostream& outfile)
+void Visit(const koopa_raw_function_t &func, std::ostream &outfile)
 {
-    
+
     // 执行一些其他的必要操作
     string func_name = func->name;
-    cout <<"  .globl " <<func_name.substr(1) << endl;
-    outfile <<"  .globl " <<func_name.substr(1) << endl;
-    cout << func_name.substr(1) << ":"<<  endl;
-    outfile << func_name.substr(1) << ":"<<  endl;
+    cout << "  .globl " << func_name.substr(1) << endl;
+    outfile << "  .globl " << func_name.substr(1) << endl;
+    cout << func_name.substr(1) << ":" << endl;
+    outfile << func_name.substr(1) << ":" << endl;
     koopa_raw_type_t type = func->ty;
 
     //访问参数表
@@ -100,7 +100,7 @@ void Visit(const koopa_raw_function_t &func, std::ostream& outfile)
 }
 
 // 访问基本块
-void Visit(const koopa_raw_basic_block_t &bblock, std::ostream& outfile)
+void Visit(const koopa_raw_basic_block_t &bblock, std::ostream &outfile)
 {
     // 执行一些其他的必要操作
     string func_name = bblock->name;
@@ -115,7 +115,7 @@ void Visit(const koopa_raw_basic_block_t &bblock, std::ostream& outfile)
 }
 
 // 访问指令
-void Visit(const koopa_raw_value_t &value, std::ostream& outfile)
+void Visit(const koopa_raw_value_t &value, std::ostream &outfile)
 {
     // 根据指令类型判断后续需要如何访问
     const auto &kind = value->kind;
@@ -141,7 +141,7 @@ void Visit(const koopa_raw_value_t &value, std::ostream& outfile)
 // ...
 
 //访问ret指令
-void Visit(const koopa_raw_return_t &ret, std::ostream& outfile)
+void Visit(const koopa_raw_return_t &ret, std::ostream &outfile)
 {
     cout << "  li \ta0, ";
     outfile << "  li \ta0, ";
@@ -156,7 +156,7 @@ void Visit(const koopa_raw_return_t &ret, std::ostream& outfile)
 }
 
 //访问int指令
-void Visit(const koopa_raw_integer_t &integer, std::ostream& outfile)
+void Visit(const koopa_raw_integer_t &integer, std::ostream &outfile)
 {
     int32_t intnum = integer.value;
     cout << intnum;

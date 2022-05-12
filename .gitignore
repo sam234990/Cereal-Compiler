@@ -1,0 +1,6 @@
+*.pdf
+*.code-workspace
+accompanying learning
+.vscode
+docker.txt
+result.txt

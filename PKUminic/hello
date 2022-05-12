@@ -1,5 +1,0 @@
-  .text
-  .globl main
-main:
-  li 	a0, 2048
-  ret

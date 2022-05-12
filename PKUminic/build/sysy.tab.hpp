@@ -57,11 +57,14 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    INT = 258,
-    VOID = 259,
-    RETURN = 260,
-    IDENT = 261,
-    INT_CONST = 262
+    ADD = 258,
+    SUB = 259,
+    NOT = 260,
+    INT = 261,
+    VOID = 262,
+    RETURN = 263,
+    IDENT = 264,
+    INT_CONST = 265
   };
 #endif
 
@@ -71,11 +74,13 @@ union YYSTYPE
 {
 #line 23 "/root/compiler/PKUminic/src/sysy.y"
 
+    int key_op;
     std::string *str_val;
     int int_val;
     BaseAST *ast_val;
+    ExpAst *ast_exp;
 
-#line 79 "/root/compiler/PKUminic/build/sysy.tab.hpp"
+#line 84 "/root/compiler/PKUminic/build/sysy.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

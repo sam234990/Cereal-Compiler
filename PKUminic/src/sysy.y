@@ -25,6 +25,7 @@ using namespace std;
     std::string *str_val;
     int int_val;
     BaseAST *ast_val;
+    ExpAst *ast_exp;
 }
 
 %token <key_op> ADD SUB NOT
@@ -32,9 +33,9 @@ using namespace std;
 %token <str_val> IDENT
 %token <int_val> INT_CONST
 
-%type <ast_val> FuncDef FuncType Block Stmt
-%type <int_val> Number Exp UnaryExp PrimaryExp UnaryOp 
-/* %type <int_val> Exp AddExp MulExp */
+%type <ast_val> FuncDef FuncType Block Stmt 
+%type <ast_exp> Exp UnaryExp PrimaryExp 
+%type <int_val> Number UnaryOp
 
 %%
 CompUnit
@@ -77,23 +78,43 @@ Block
 Stmt
     : RETURN Exp ';'{
         auto ast = new StmtAST();
-        ast->number =($2);
+        ast->Exp = unique_ptr<ExpAst>($2);
         $$ = ast;
     };
  
 Exp
-    : UnaryExp{
-
+    : UnaryExp{ 
+        $$ = ($1); 
     };
 
 PrimaryExp
-    : '(' Exp ')'
-    | Number;
+    : '(' Exp ')'{
+        auto ast = new PrimaryExpAST();
+        ast->exp = unique_ptr<ExpAst>($2);
+        $$ = ast;
+    }
+    | Number{ 
+        auto ast = new PrimaryExpAST();
+        ast->number = ($1);//表示该PrimaryExp为Number
+        ast->exp = NULL;
+        $$ = ast;
+    };
 
 
 UnaryExp
-    : PrimaryExp | UnaryOp UnaryExp;
-
+    : PrimaryExp{ 
+        auto ast = new UnaryExpAST();
+        ast->primaryexp = unique_ptr<ExpAst>($1);
+        ast->rhs = NULL;//表示该UnaryExp为PrimaryExp
+        $$ = ast;
+    }
+    | UnaryOp UnaryExp{
+        auto ast = new UnaryExpAST();
+        ast->unaryop = ($1);
+        ast->primaryexp = NULL;//表示该UnaryExp为第二种
+        ast->rhs = unique_ptr<ExpAst>($2);
+        $$ = ast;
+    };
 
 
 Number
@@ -102,9 +123,9 @@ Number
     };
 
 UnaryOp
-    : ADD
-    | SUB
-    | NOT;
+    : ADD{ $$ = ($1); }
+    | SUB{ $$ = ($1); }
+    | NOT{ $$ = ($1); };
 %%
 
 

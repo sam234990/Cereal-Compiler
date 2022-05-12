@@ -32,9 +32,11 @@ Hexadecimal   0[xX][0-9a-fA-F]+
 {WhiteSpace}    {/* 空白符忽略, 不做任何操作 */}
 {LineComment}   {/* 单行注释忽略, 不做任何操作 */}
 
+
 "+"             { yylval.key_op = ADD; return ADD;}
 "-"             { yylval.key_op = SUB; return SUB;}
 "!"             { yylval.key_op = NOT; return NOT;}
+
 "int"           { return INT; }
 "void"          { return VOID; }
 "return"        { return RETURN; }
