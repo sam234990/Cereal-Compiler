@@ -63,19 +63,20 @@ extern int yydebug;
     MULT = 261,
     DIV = 262,
     MOD = 263,
-    INT = 264,
-    VOID = 265,
-    RETURN = 266,
-    LT = 267,
-    LE = 268,
-    GT = 269,
-    GE = 270,
-    EQ = 271,
-    NE = 272,
-    AND = 273,
-    OR = 274,
-    IDENT = 275,
-    INT_CONST = 276
+    LT = 264,
+    LE = 265,
+    GT = 266,
+    GE = 267,
+    EQ = 268,
+    NE = 269,
+    AND = 270,
+    OR = 271,
+    INT = 272,
+    VOID = 273,
+    RETURN = 274,
+    CONST = 275,
+    IDENT = 276,
+    INT_CONST = 277
   };
 #endif
 
@@ -83,15 +84,21 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 23 "/root/compiler/PKUminic/src/sysy.y"
+#line 27 "/root/compiler/PKUminic/src/sysy.y"
 
     int key_op;
     std::string *str_val;
     int int_val;
     BaseAST *ast_val;
     ExpAST *ast_exp;
+    DeclareAST *ast_decl;
+    DefineAST *ast_define; 
+    StmtAST *ast_stmt;
+    BlockAST *ast_block;
+    LeftValAST *ast_lval;
+    IdentifierAST *ast_ident;
 
-#line 95 "/root/compiler/PKUminic/build/sysy.tab.hpp"
+#line 102 "/root/compiler/PKUminic/build/sysy.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

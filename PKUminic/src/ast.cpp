@@ -1,161 +1,88 @@
 #include "../include/ast.h"
+#include "../include/symbol.h"
 #include <iostream>
+#include <memory>
 #include "sysy.tab.hpp"
 
 using namespace std;
 
-int symbolnum = 0;
+// ==================== DefOneAST  Class ====================
+DefOneAST::DefOneAST(std::string varname, int line_num)
 
-
-// ==================== CompUnitAST  Class ====================
-void CompUnitAST::Dump(string &inputstr) const {
-    // inputstr = "Koopa IR: \n";
-    func_def->Dump(inputstr);
-    return;
-}
-
-// ==================== FuncDefAST  Class ====================
-void FuncDefAST::Dump(string &inputstr) const {
-    inputstr = inputstr + "fun @" + ident + "(): ";
-    func_type->Dump(inputstr);
-    inputstr.append("{\n");
-    block->Dump(inputstr);
-    inputstr.append("}");
-    return;
-}
-
-// ==================== FuncTypeAST  Class ====================
-void FuncTypeAST::Dump(string &inputstr) const {
-    if(functype == "int") inputstr.append("i32 ");
-    else inputstr.append(" ");
-    return;
-}
-
-// ==================== BlockAST  Class ====================
-void BlockAST::Dump(string &inputstr) const {
-    inputstr.append("%entry: \n");
-    stmt->Dump(inputstr); 
-    inputstr.append("\n");
-    return;
-}
-
-// ==================== StmtAST  Class ====================
-void StmtAST::Dump(string &inputstr) const {
-    string temp = Exp->Dump(inputstr);
-    inputstr.append("  ret " + temp);
-    return;
-}
-
-
-// ==================== PrimaryExpAST  Class ====================
-string PrimaryExpAST::Dump(string &inputstr) const {
-    if (exp == NULL)
-    {//该PrimaryExp为Number 这里不用写入
-        // inputstr.append(to_string(number));
-        return to_string(number);
+{
+    this->varname = varname;
+    this->line_num = line_num;
+    // 实现同一作用域下变量重名判断
+    auto &symbol_table = symbol::Scope_1->symboltable;
+    const auto &var_iter = symbol_table.find(varname);
+    if (var_iter == symbol_table.end())
+    { //如果为空,则添加到符号表中
+        auto temp = new symbol::SymbolItem(false, false);
+        symbol_table.insert({varname, *temp}); // 对于constdefone赋值直接添加到符号表中.
     }
-    else{//该PrimaryExp为exp
-        string temp = exp->Dump(inputstr);
-        return temp;
+    else
+    { //重名报错
+        symbol::SemanticError(line_num, "variable" + varname + "define repetition");
     }
 }
 
-
-// ==================== UnaryExpAST  Class ====================
-string UnaryExpAST::Dump(string &inputstr) const {
-    if (primaryexp == NULL)
-    {//该UnaryExp为第二种
-        string symbol_rhs = rhs->Dump(inputstr);//获取右操作数symbol
-        string temp;//本行symbol
-        string expstr;//本行的命令
-        switch (unaryop)
-        {
-        case ADD://ADD无操作，使用上一symbol
-            return symbol_rhs;
-            break;
-        case SUB:
-            temp = "%" + to_string(symbolnum++ );
-            expstr = "  " + temp + " = sub 0, " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
-            break;
-        case NOT:
-            temp = "%" + to_string(symbolnum++ );
-            expstr = "  " + temp + " = eq " + symbol_rhs + ", 0\n";
-            inputstr = inputstr.append(expstr);
-            break;
-        default:
-            break;
+// ==================== DefOneInitAST  Class ====================
+DefOneInitAST::DefOneInitAST(string name, unique_ptr<ExpAST> exp, bool is_const, int line_num)
+{
+    this->is_const = is_const;
+    this->line_num = line_num;
+    this->expvalue = move(exp);
+    this->constname = name;
+    // 实现同一作用域下变量重名判断
+    auto &symbol_table = symbol::Scope_1->symboltable;
+    const auto &var_iter = symbol_table.find(constname);
+    if (var_iter == symbol_table.end())
+    { //如果为空,则添加到符号表中
+        if (is_const)
+        { //如果是const类型,则将is_const设置为true
+            auto temp = new symbol::SymbolItem(true, false);
+            symbol_table.insert({constname, *temp}); // 对于constdefone赋值直接添加到符号表中.
         }
-        return temp;
+        else
+        {
+            auto temp = new symbol::SymbolItem(false, false);
+            symbol_table.insert({constname, *temp}); // 对于constdefone赋值直接添加到符号表中.
+        }
     }
-    else{//该UnaryExp为PrimaryExp
-        return primaryexp->Dump(inputstr);;
+    else
+    { //重名报错
+        symbol::SemanticError(line_num, "variable" + constname + "define repetition");
     }
 }
 
-
-// ==================== MultExpAST  Class ====================
-string MultExpAST::Dump(string &inputstr) const{
-    if (unaryexp == NULL)
-    {//该MultExpAST为第二种
-        string symbol_lhs = multexp->Dump(inputstr);//获取左操作数symbol
-        string symbol_rhs = rhs->Dump(inputstr);//获取右操作数symbol
-        string temp;//本行symbol
-        string expstr;//本行的命令
-        switch (multop)
-        {
-        case MULT://
-            temp = "%" + to_string(symbolnum++ );
-            expstr = "  " + temp + " = mul " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
-            break;
-        case DIV:
-            temp = "%" + to_string(symbolnum++ );
-            expstr = "  " + temp + " = div " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
-            break;
-        case MOD:
-            temp = "%" + to_string(symbolnum++ );
-            expstr = "  " + temp + " = mod " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
-            break;
-        default:
-            break;
-        }
-        return temp;
-    }
-    else{//该MultExpAST为PrimaryExp
-        return unaryexp->Dump(inputstr);;
-    }
+// ==================== BinaryExpAST  Class ====================
+BinaryExpAST::BinaryExpAST(unique_ptr<ExpAST> first)
+{
+    firstformexp = move(first);
+    rhs = NULL; //表示该MultExp为UnaryExp
+    lhs = NULL; //表示该MultExp为UnaryExp
 }
 
+BinaryExpAST::BinaryExpAST(unique_ptr<ExpAST> l, int oper, unique_ptr<ExpAST> r)
+{
+    firstformexp = NULL; //表示该MultExp为第二种
+    lhs = move(l);
+    operators = oper;
+    rhs = move(r);
+}
 
-// ==================== AddExpAST  Class ====================
-string AddExpAST::Dump(string &inputstr) const{
-    if (multexp == NULL)
-    {//该AddExpAST为第二种
-        string symbol_lhs = addexp->Dump(inputstr);//获取左操作数symbol
-        string symbol_rhs = rhs->Dump(inputstr);//获取右操作数symbol
-        string temp;//本行symbol
-        string expstr;//本行的命令
-        switch (addop)
-        {
-        case ADD://
-            temp = "%" + to_string(symbolnum++ );
-            expstr = "  " + temp + " = add " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
-            break;
-        case SUB:
-            temp = "%" + to_string(symbolnum++ );
-            expstr = "  " + temp + " = sub " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
-            break;
-        default:
-            break;
-        }
-        return temp;
-    }
-    else{//该AddExpAST为MultExpAST
-        return multexp->Dump(inputstr);;
-    }
+// ==================== CondExpAST  Class ====================
+CondExpAST::CondExpAST(unique_ptr<ExpAST> first)
+{
+    firstformexp = move(first);
+    rhs = NULL; //表示该MultExp为UnaryExp
+    lhs = NULL; //表示该MultExp为UnaryExp
+}
+
+CondExpAST::CondExpAST(unique_ptr<ExpAST> l, int oper, unique_ptr<ExpAST> r)
+{
+    firstformexp = NULL; //表示该MultExp为第二种
+    lhs = move(l);
+    condoper = oper;
+    rhs = move(r);
 }

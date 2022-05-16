@@ -7,7 +7,8 @@
 #include "koopa.h"
 #include "../include/util.h"
 #include "../include/ast.h"
-#include "../include/koopair.h"
+#include "../include/genricsv.h"
+#include "../include/symbol.h"
 
 using namespace std;
 

@@ -1,10 +1,13 @@
-// int main(){
-//     return 2048;
+
+// int main() {
+//   return 1 <= 2;
 // }
 // int main() {
-//   return +(- -!6);  // 看起来像个颜文字
+//   const int x = 3 + 4 * (5 % 6);
+//   return x;
 // }
-int main()
-{
-    return 1 + 2 * 3;
+int main() {
+  int x = 10;
+  x = x + 1;
+  return x;
 }

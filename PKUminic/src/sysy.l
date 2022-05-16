@@ -3,6 +3,8 @@
 %option noinput
 %x COMMENT
 
+UCN (\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8})
+
 %{
 #include <cstdlib>
 #include <string>
@@ -16,12 +18,14 @@ WhiteSpace    [ \t\n\r]*
 LineComment   "//".*$
 
 /* 标识符 */
-Identifier    [a-zA-Z_][a-zA-Z0-9_]*
+Identifier    ([_a-zA-Z]|{UCN})([_a-zA-Z0-9]|{UCN})*
 
 /* 整数字面量 */
 Decimal       [1-9][0-9]*
 Octal         0[0-7]*
 Hexadecimal   0[xX][0-9a-fA-F]+
+
+
 /* 第一个为多行注释 */
 %%
 "/*"		{BEGIN(COMMENT);/* 多行注释忽略, 不做任何操作 */}
@@ -45,7 +49,6 @@ Hexadecimal   0[xX][0-9a-fA-F]+
 ">="	    	{ yylval.key_op = GE; return GE; }
 "=="		    { yylval.key_op = EQ; return EQ; }
 "!="		    { yylval.key_op = NE; return NE; }
-"!"		    	{ yylval.key_op = NOT; return NOT; }
 "&&"	    	{ yylval.key_op = AND; return AND; }
 "||"	    	{ yylval.key_op = OR; return OR; }
 
@@ -53,6 +56,7 @@ Hexadecimal   0[xX][0-9a-fA-F]+
 "int"           { return INT; }
 "void"          { return VOID; }
 "return"        { return RETURN; }
+"const"         { return CONST; }
 
 {Identifier}    { yylval.str_val = new string(yytext); return IDENT; }
 

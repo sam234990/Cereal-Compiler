@@ -4,44 +4,138 @@
 #include <iostream>
 #include <fstream>
 #include <map>
-#include <cassert>
-#include "../include/koopair.h"
+#include "../include/genricsv.h"
 #include "koopa.h"
 
 using namespace std;
 
-// 访问binary指令
-void Visit_binary(const koopa_raw_value_t &value, std::ostream &outfile, int &register_num, std::map<koopa_raw_value_t, int> &map_reg)
+int register_num = 0;
+map<koopa_raw_value_t, int> regmap;
+
+void koopa_ir_from_str(string irstr, std::ostream &outfile)
+{
+    const char *str = irstr.c_str();
+
+    // 解析字符串 str, 得到 Koopa IR 程序
+    koopa_program_t program;
+    koopa_error_code_t ret = koopa_parse_from_string(str, &program);
+    assert(ret == KOOPA_EC_SUCCESS); // 确保解析时没有出错
+    // 创建一个 raw program builder, 用来构建 raw program
+    koopa_raw_program_builder_t builder = koopa_new_raw_program_builder();
+    // 将 Koopa IR 程序转换为 raw program
+    koopa_raw_program_t raw = koopa_build_raw_program(builder, program);
+    // 将 Koopa IR 程序输出到stdout中
+    koopa_dump_to_stdout(program);
+
+    // 释放 Koopa IR 程序占用的内存
+    koopa_delete_program(program);
+
+    // 处理 raw program
+    // 遍历raw
+    Visit(raw, outfile);
+
+    // 处理完成, 释放 raw program builder 占用的内存
+    // 注意, raw program 中所有的指针指向的内存均为 raw program builder 的内存
+    // 所以不要在 raw program 处理完毕之前释放 builder
+    koopa_delete_raw_program_builder(builder);
+}
+
+// 访问 raw program
+void Visit(const koopa_raw_program_t &program, std::ostream &outfile)
+{
+    // 执行一些其他的必要操作
+    outfile << "  .text" << endl;
+
+    // 访问所有全局变量
+    Visit(program.values, outfile);
+
+    // 访问所有函数
+    Visit(program.funcs, outfile);
+}
+
+// 访问 raw slice ---- 通用的处理函数
+void Visit(const koopa_raw_slice_t &slice, std::ostream &outfile)
+{
+    for (size_t i = 0; i < slice.len; ++i)
+    {
+        auto ptr = slice.buffer[i];
+        // 根据 slice 的 kind 决定将 ptr 视作何种元素
+        switch (slice.kind)
+        {
+        case KOOPA_RSIK_FUNCTION:
+            // 访问函数func
+            Visit_func(reinterpret_cast<koopa_raw_function_t>(ptr), outfile);
+            break;
+        case KOOPA_RSIK_BASIC_BLOCK:
+            // 访问基本块block
+            Visit_bblcok(reinterpret_cast<koopa_raw_basic_block_t>(ptr), outfile);
+            break;
+        case KOOPA_RSIK_VALUE:
+            // 访问指令value
+            Visit_val(reinterpret_cast<koopa_raw_value_t>(ptr), outfile, regmap);
+            break;
+        case KOOPA_RSIK_TYPE:
+            // 访问type
+            // Visit(reinterpret_cast<koopa_raw_type_t>(ptr));
+            break;
+        default:
+            // 我们暂时不会遇到其他内容, 于是不对其做任何处理
+            assert(false);
+        }
+    }
+}
+
+// 访问func
+void Visit_func(const koopa_raw_function_t &func, std::ostream &outfile)
+{
+
+    // 执行一些其他的必要操作
+    string func_name = func->name;
+
+    outfile << "  .globl " << func_name.substr(1) << endl;
+    outfile << func_name.substr(1) << ":" << endl;
+    koopa_raw_type_t type = func->ty;
+
+    //访问参数表
+    Visit(func->params, outfile);
+    // 访问所有基本块
+    Visit(func->bbs, outfile);
+}
+
+// 访问basic block
+void Visit_bblcok(const koopa_raw_basic_block_t &bblock, std::ostream &outfile)
+{
+    // 执行一些其他的必要操作
+    string func_name = bblock->name;
+    //访问参数表
+    Visit(bblock->params, outfile);
+    //访问基本块所使用的值。
+    Visit(bblock->used_by, outfile);
+
+    // 访问所有指令
+    Visit(bblock->insts, outfile);
+    return;
+}
+
+// 访问value
+void Visit_val(const koopa_raw_value_t &value, std::ostream &outfile, std::map<koopa_raw_value_t, int> &map_reg)
 {
     // 根据指令类型判断后续需要如何访问
     const auto &kind = value->kind;
-    const auto binary = kind.data.binary;
-    // 根据运算符类型判断后续如何翻译
-    switch (binary.op)
+    switch (kind.tag)
     {
-    case KOOPA_RBO_EQ:
-        // outfile << "  # eq\n";
-        Visit_bin_eq(value, outfile, register_num, map_reg);
+    case KOOPA_RVT_RETURN:
+        // 访问 return 指令
+        Visit_ret(kind.data.ret, outfile, map_reg);
         break;
-    case KOOPA_RBO_ADD:
-        // outfile << "  # add\n";
-        Visit_bin_double_reg(value, outfile, register_num, map_reg);
+    case KOOPA_RVT_INTEGER:
+        // 访问 integer 指令
+        Visit_int(kind.data.integer, outfile);
         break;
-    case KOOPA_RBO_SUB:
-        // outfile << "  # sub\n";
-        Visit_bin_double_reg(value, outfile, register_num, map_reg);
-        break;
-    case KOOPA_RBO_MUL:
-        // outfile << "  # mul\n";
-        Visit_bin_double_reg(value, outfile, register_num, map_reg);
-        break;
-    case KOOPA_RBO_DIV:
-        // outfile << "  # div\n";
-        Visit_bin_double_reg(value, outfile, register_num, map_reg);
-        break;
-    case KOOPA_RBO_MOD:
-        // outfile << "  # mod\n";
-        Visit_bin_double_reg(value, outfile, register_num, map_reg);
+    case KOOPA_RVT_BINARY:
+        // 访问binary指令
+        cout << "访问二元运算指令";
+        Visit_binary(value, outfile, register_num, map_reg);
         break;
     default:
         // 其他类型暂时遇不到
@@ -50,124 +144,38 @@ void Visit_binary(const koopa_raw_value_t &value, std::ostream &outfile, int &re
     return;
 }
 
-void Visit_bin_eq(const koopa_raw_value_t &value, std::ostream &outfile, int &register_num, std::map<koopa_raw_value_t, int> &map_reg)
-{ // 访问 eq 指令
-    cout << " eq 指令" << endl;
-    const auto &kind = value->kind;
-    const auto binary = kind.data.binary;
-    string leftreg, rightreg;                            // 左右节点值
-    map_reg[value] = register_num++;                     // 为当前指令分配一个寄存器
-    string eqregister = "t" + to_string(map_reg[value]); // 定义当前指令的寄存器
-    if (binary.lhs->kind.tag == KOOPA_RVT_INTEGER)
-    { //先处理左节点,左节点为int值
-        if (binary.lhs->kind.data.integer.value != 0)
-        { //左节点为非0结点, 用li指令到当前寄存器
-            outfile << "  li\t" << eqregister << ", ";
-            Visit_val(binary.lhs, outfile, map_reg);
-            outfile << endl;
-            leftreg = eqregister;
-        }
-        else
-        { //左节点为0值
-            leftreg = "x0";
-        }
+// 访问对应类型指令的函数定义略
+// 视需求自行实现
+// ...
+
+//访问ret指令
+void Visit_ret(const koopa_raw_return_t &ret, std::ostream &outfile, std::map<koopa_raw_value_t, int> &map_reg)
+{
+    koopa_raw_value_t retval = ret.value;
+    const auto &kind = retval->kind;
+    string retreg;
+    if (kind.tag == KOOPA_RVT_INTEGER)
+    {                            // value指向int 数值
+        outfile << "  li\ta0, "; //访问指令返回后面跟的为int数值, 直接放入a0中
+        Visit_val(ret.value, outfile, map_reg);
+        outfile << "\n";
     }
     else
-    {
-        leftreg = "t" + to_string(map_reg[binary.lhs]); //获取左边的寄存器
+    { // value指向了上一条指令的结果寄存器
+        retreg = get_reg_(ret.value, map_reg); ;
+        outfile << "  mv\ta0, " + retreg + "\n"; //将上一条指令的结果寄存器写入其中
+        // 写入
+        cout << "return's last instrucions register=" << retreg << endl;
     }
-    if (binary.rhs->kind.tag == KOOPA_RVT_INTEGER)
-    { //处理右节点,右节点为int值
-        if (binary.rhs->kind.data.integer.value != 0)
-        { //右节点为非0结点, 用xori立即数指令
-            outfile << "  xori\t" + eqregister + ", " + leftreg + ", ";
-            Visit_val(binary.rhs, outfile, map_reg);
-            outfile << endl;
-        }
-        else
-        { //右节点为0值, 用x0
-            outfile << "  xor\t" + eqregister + ", " + leftreg + ", x0" + '\n';
-        }
-    }
-    else
-    {
-        rightreg = "t" + to_string(map_reg[binary.lhs]); //获取右边的寄存器
-        outfile << "  xor\t" + eqregister + ", " + leftreg + ", " + rightreg + '\n';
-    }
-    outfile << "  seqz\t" + eqregister + ", " + eqregister + '\n';
+    outfile << "  ret" << endl;
     return;
 }
 
-void Visit_bin_double_reg(const koopa_raw_value_t &value, std::ostream &outfile, int &register_num, std::map<koopa_raw_value_t, int> &map_reg)
+//访问int指令
+void Visit_int(const koopa_raw_integer_t &integer, std::ostream &outfile)
 {
-    cout << " 二者均为寄存器的指令" << endl;
-    const auto &kind = value->kind;
-    const auto binary = kind.data.binary;
-    string bin_op; //当前指令的运算符
-    switch (binary.op)
-    { // 根据指令类型判断当前指令的运算符
-    case KOOPA_RBO_ADD:
-        bin_op = "add";
-        break;
-    case KOOPA_RBO_SUB:
-        bin_op = "sub";
-        break;
-    case KOOPA_RBO_MUL:
-        bin_op = "mul";
-        break;
-    case KOOPA_RBO_DIV:
-        bin_op = "div";
-        break;
-    case KOOPA_RBO_MOD:
-        bin_op = "rem";
-        break;
-    default: // 其他类型暂时遇不到
-        assert(false);
-    }
-    string leftreg, rightreg;                            // 左右节点值
-    map_reg[value] = register_num++;                     // 为当前指令分配一个寄存器
-    string eqregister = "t" + to_string(map_reg[value]); // 定义当前指令的寄存器
-
-    if (binary.lhs->kind.tag == KOOPA_RVT_INTEGER)
-    { //先处理左节点,左节点为int值
-        if (binary.lhs->kind.data.integer.value == 0)
-        { //左节点为0
-            leftreg = "x0";
-        }
-        else
-        { //左节点为非0 int, li到当前寄存器
-            outfile << "  li\t" << eqregister << ", ";
-            Visit_val(binary.lhs, outfile, map_reg);
-            outfile << endl;
-            leftreg = eqregister;
-        }
-    }
-    else
-    {
-        assert(binary.lhs->kind.tag != KOOPA_RVT_INTEGER); // assert左右节点不是int值
-        leftreg = "t" + to_string(map_reg[binary.lhs]);    //获取左边的寄存器
-    }
-
-    if (binary.rhs->kind.tag == KOOPA_RVT_INTEGER)
-    { //处理右节点,右节点为int值且为0
-        if (binary.rhs->kind.data.integer.value == 0)
-        { //右节点为0
-            rightreg = "x0";
-        }
-        else
-        { //右节点为非0 int, li到当前寄存器
-            map_reg[value] = register_num++;              // 为当前指令再分配一个寄存器
-            eqregister = "t" + to_string(map_reg[value]); // 定义当前指令的寄存器
-            outfile << "  li\t" << eqregister << ", ";
-            Visit_val(binary.rhs, outfile, map_reg);
-            outfile << endl;
-            rightreg = eqregister;
-        }
-    }
-    else
-    {
-        assert(binary.rhs->kind.tag != KOOPA_RVT_INTEGER); // assert左右节点不是int值
-        rightreg = "t" + to_string(map_reg[binary.rhs]);   //获取右边的寄存器
-    }
-    outfile << "  " + bin_op + '\t' + eqregister + ", " + leftreg + ", " + rightreg + "\n";
+    cout << "访问int" << endl;
+    int32_t intnum = integer.value;
+    outfile << intnum; //将需要的数值写入文件中
+    return;
 }
