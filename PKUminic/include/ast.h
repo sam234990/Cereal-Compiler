@@ -22,101 +22,11 @@ class IdentifierAST;
 class BaseAST
 {
 public:
+    int line_num;
     virtual ~BaseAST() = default;
     virtual void Dump(std::string &inputstr) const = 0;
 };
 
-// CompUnit 是 BaseAST
-class CompUnitAST : public BaseAST
-{
-public:
-    // 用智能指针管理对象
-    std::unique_ptr<BaseAST> func_def;
-    void Dump(std::string &inputstr) const override; //利用dump遍历抽象语法树，生成string形式的KoopaIR
-};
-
-// FuncDef 也是 BaseAST
-class FuncDefAST : public BaseAST
-{
-public:
-    std::unique_ptr<BaseAST> func_type;
-    std::string ident;
-    std::unique_ptr<StmtAST> block;
-    void Dump(std::string &inputstr) const override;
-};
-
-// FuncTypeAST 也是 BaseAST
-class FuncTypeAST : public BaseAST
-{
-public:
-    std::string functype;
-    void Dump(std::string &inputstr) const override;
-};
-
-// ====================  语句 相关基类 ====================
-class StmtAST : public BaseAST
-{
-public:
-    virtual ~StmtAST() = default;
-    virtual void Dump(std::string &inputstr) const = 0;
-};
-
-// BlockAST 是block的基本单元,里面装着各种stmtast,包括stmt和decl语句
-class BlockAST : public StmtAST
-{
-public:
-    std::vector<StmtAST *> blockitemlist;
-    void Dump(std::string &inputstr) const override;
-};
-
-// 返回语句
-class ReturnStmtAST : public StmtAST
-{
-public:
-    int number;
-    std::unique_ptr<ExpAST> Exp;
-    void Dump(std::string &inputstr) const override;
-};
-
-// 声明语句 语句的一种, define_list_存放各种define语句
-class DeclareAST : public StmtAST
-{
-public:
-    int btype;
-    std::vector<DefineAST *> define_list_; //存放各种define语句
-    void Dump(std::string &inputstr) const override;
-};
-
-// ==================== define语句相关基类 ====================
-class DefineAST
-{
-public:
-    virtual ~DefineAST() = default;
-    virtual void Dump(std::string &inputstr) const = 0;
-};
-
-// 变量声明 AST
-class DefOneAST : public DefineAST{
-public:
-    int line_num;
-    std::string varname;
-
-    DefOneAST(std::string varname, int line_num);
-    void Dump(std::string &inputstr) const override;
-};
-
-// 变量声明并赋值AST
-class DefOneInitAST : public DefineAST
-{
-public:
-    int line_num;
-    bool is_const;
-    std::string constname;
-    std::unique_ptr<ExpAST> expvalue;
-
-    DefOneInitAST(std::string name, std::unique_ptr<ExpAST> exp, bool is_const, int line_num);
-    void Dump(std::string &inputstr) const override;
-};
 
 // ==================== 表达式相关基类 ====================
 class ExpAST
@@ -141,6 +51,7 @@ public:
 class IdentifierAST : public LeftValAST
 {
 public:
+    int line_num;
     std::string ident_name;
     std::string Dump(std::string &inputstr) const override;
     int cal() const override; //求计算值
@@ -198,5 +109,112 @@ public:
     std::string Dump(std::string &inputstr) const override;
     int cal() const override;
 };
+
+
+
+// CompUnit 是 BaseAST
+class CompUnitAST : public BaseAST
+{
+public:
+    // 用智能指针管理对象
+    std::unique_ptr<BaseAST> func_def;
+    void Dump(std::string &inputstr) const override; //利用dump遍历抽象语法树，生成string形式的KoopaIR
+};
+
+// FuncDef 也是 BaseAST
+class FuncDefAST : public BaseAST
+{
+public:
+    std::unique_ptr<BaseAST> func_type;
+    std::string ident;
+    std::unique_ptr<StmtAST> block;
+    void Dump(std::string &inputstr) const override;
+};
+
+// FuncTypeAST 也是 BaseAST
+class FuncTypeAST : public BaseAST
+{
+public:
+    std::string functype;
+    void Dump(std::string &inputstr) const override;
+};
+
+// ====================  语句 相关基类 ====================
+class StmtAST : public BaseAST
+{
+public:
+    virtual ~StmtAST() = default;
+    virtual void Dump(std::string &inputstr) const = 0;
+};
+
+// BlockAST 是block的基本单元,里面装着各种stmtast,包括stmt和decl语句
+class BlockAST : public StmtAST
+{
+public:
+    std::vector<StmtAST *> blockitemlist;
+    void Dump(std::string &inputstr) const override;
+};
+
+// 返回语句
+class ReturnStmtAST : public StmtAST
+{
+public:
+    int number;
+    std::unique_ptr<ExpAST> Exp;
+    void Dump(std::string &inputstr) const override;
+};
+
+class AssignStmtAST : public StmtAST
+{
+public:
+    int line_num;
+    std::unique_ptr<LeftValAST> leftval;
+    std::unique_ptr<ExpAST> Exp;
+    AssignStmtAST(std::unique_ptr<LeftValAST> leftval, std::unique_ptr<ExpAST> Exp, int line_num);
+
+    void Dump(std::string &inputstr) const override;
+};
+
+// 声明语句 语句的一种, define_list_存放各种define语句
+class DeclareAST : public StmtAST
+{
+public:
+    int btype;
+    std::vector<DefineAST *> define_list_; //存放各种define语句
+    void Dump(std::string &inputstr) const override;
+};
+
+// ==================== define语句相关基类 ====================
+class DefineAST
+{
+public:
+    virtual ~DefineAST() = default;
+    virtual void Dump(std::string &inputstr) const = 0;
+};
+
+// 变量声明 AST
+class DefOneAST : public DefineAST
+{
+public:
+    int line_num;
+    std::string varname;
+
+    DefOneAST(std::string varname, int line_num);
+    void Dump(std::string &inputstr) const override;
+};
+
+// 变量声明并赋值AST
+class DefOneInitAST : public DefineAST
+{
+public:
+    int line_num;
+    bool is_const;
+    std::string varnameinit;
+    std::unique_ptr<ExpAST> expvalue;
+
+    DefOneInitAST(std::string name, std::unique_ptr<ExpAST> exp, bool is_const, int line_num);
+    void Dump(std::string &inputstr) const override;
+};
+
 
 #endif

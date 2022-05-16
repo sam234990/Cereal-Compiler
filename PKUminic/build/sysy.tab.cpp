@@ -556,13 +556,13 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    69,    69,    76,    80,    86,    93,   101,   104,   109,
-     114,   117,   124,   130,   135,   139,   147,   156,   162,   169,
-     172,   178,   183,   190,   193,   197,   198,   201,   208,   213,
-     218,   225,   231,   237,   247,   254,   260,   269,   272,   277,
-     280,   285,   289,   294,   297,   302,   305,   310,   313,   318,
-     323,   324,   327,   328,   329,   330,   333,   334,   335,   338,
-     339,   342,   343,   344
+       0,    69,    69,    77,    81,    87,    94,   102,   105,   110,
+     115,   118,   125,   131,   136,   140,   148,   157,   163,   170,
+     173,   179,   184,   191,   194,   198,   199,   202,   209,   214,
+     219,   226,   232,   238,   248,   256,   262,   271,   274,   279,
+     282,   287,   291,   296,   299,   304,   307,   312,   315,   320,
+     325,   326,   329,   330,   331,   332,   335,   336,   337,   340,
+     341,   344,   345,   346
 };
 #endif
 
@@ -1421,113 +1421,114 @@ yyreduce:
              {
         auto comp_unit = make_unique<CompUnitAST>();
         comp_unit->func_def = unique_ptr<BaseAST>((yyvsp[0].ast_val));
+        comp_unit->line_num = yyget_lineno();
         ast = move(comp_unit);
     }
-#line 1427 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1428 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 3:
-#line 76 "/root/compiler/PKUminic/src/sysy.y"
+#line 77 "/root/compiler/PKUminic/src/sysy.y"
                   {//将分号移至上方, 使 constdecl变成左递归。
         (yyval.ast_decl) = ((yyvsp[-1].ast_decl));
     }
-#line 1435 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1436 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 4:
-#line 80 "/root/compiler/PKUminic/src/sysy.y"
+#line 81 "/root/compiler/PKUminic/src/sysy.y"
               {
-
+        (yyval.ast_decl) = ((yyvsp[-1].ast_decl));
     }
-#line 1443 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1444 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 5:
-#line 86 "/root/compiler/PKUminic/src/sysy.y"
+#line 87 "/root/compiler/PKUminic/src/sysy.y"
                            {//为左值新建一个声明类
         auto const_decl = new DeclareAST();
         const_decl->btype = ((yyvsp[-1].key_op));
         const_decl->define_list_.push_back(((yyvsp[0].ast_define)));//并将定义语句放入其中
         (yyval.ast_decl) = const_decl;
     }
-#line 1454 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1455 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 6:
-#line 93 "/root/compiler/PKUminic/src/sysy.y"
+#line 94 "/root/compiler/PKUminic/src/sysy.y"
                           {
         (yyval.ast_decl) = ((yyvsp[-2].ast_decl));//左递归
         (yyval.ast_decl)->define_list_.push_back((yyvsp[0].ast_define));//将定义语句的放入其中
     }
-#line 1463 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1464 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 8:
-#line 104 "/root/compiler/PKUminic/src/sysy.y"
+#line 105 "/root/compiler/PKUminic/src/sysy.y"
                  { (yyval.ast_define) = ((yyvsp[0].ast_define)); }
-#line 1469 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1470 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 9:
-#line 109 "/root/compiler/PKUminic/src/sysy.y"
+#line 110 "/root/compiler/PKUminic/src/sysy.y"
                        {
         (yyval.ast_define) = new DefOneInitAST(*unique_ptr<string>((yyvsp[-2].str_val)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), true, yyget_lineno());
     }
-#line 1477 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1478 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 10:
-#line 114 "/root/compiler/PKUminic/src/sysy.y"
+#line 115 "/root/compiler/PKUminic/src/sysy.y"
             { (yyval.ast_exp) = ((yyvsp[0].ast_exp)); }
-#line 1483 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1484 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 11:
-#line 117 "/root/compiler/PKUminic/src/sysy.y"
+#line 118 "/root/compiler/PKUminic/src/sysy.y"
                 {
         auto var_decl = new DeclareAST();
         var_decl->btype = ((yyvsp[-1].key_op));
         var_decl->define_list_.push_back(((yyvsp[0].ast_define)));//并将定义语句放入其中
         (yyval.ast_decl) = var_decl;
     }
-#line 1494 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1495 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 12:
-#line 124 "/root/compiler/PKUminic/src/sysy.y"
+#line 125 "/root/compiler/PKUminic/src/sysy.y"
                     {
         (yyval.ast_decl) = ((yyvsp[-2].ast_decl));//左递归
         (yyval.ast_decl)->define_list_.push_back((yyvsp[0].ast_define));//将定义语句的放入其中
     }
-#line 1503 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1504 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 13:
-#line 130 "/root/compiler/PKUminic/src/sysy.y"
+#line 131 "/root/compiler/PKUminic/src/sysy.y"
             {
         (yyval.ast_define) = ((yyvsp[0].ast_define));
     }
-#line 1511 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1512 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 14:
-#line 135 "/root/compiler/PKUminic/src/sysy.y"
+#line 136 "/root/compiler/PKUminic/src/sysy.y"
                        {
         (yyval.ast_define) = new DefOneInitAST(*unique_ptr<string>((yyvsp[-2].str_val)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), false, yyget_lineno());
     }
-#line 1519 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1520 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 15:
-#line 139 "/root/compiler/PKUminic/src/sysy.y"
+#line 140 "/root/compiler/PKUminic/src/sysy.y"
          {
         (yyval.ast_define) = new DefOneAST(*unique_ptr<string>((yyvsp[0].str_val)), yyget_lineno());
     }
-#line 1527 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1528 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 16:
-#line 147 "/root/compiler/PKUminic/src/sysy.y"
+#line 148 "/root/compiler/PKUminic/src/sysy.y"
                                   {
         auto ast = new FuncDefAST();
         ast->func_type = unique_ptr<BaseAST>((yyvsp[-4].ast_val));
@@ -1535,145 +1536,145 @@ yyreduce:
         ast->block = unique_ptr<StmtAST>((yyvsp[0].ast_block));
         (yyval.ast_val) = ast;
     }
-#line 1539 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1540 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 17:
-#line 156 "/root/compiler/PKUminic/src/sysy.y"
+#line 157 "/root/compiler/PKUminic/src/sysy.y"
          {
         auto ast = new FuncTypeAST();
         ast->functype = "int";
         (yyval.ast_val) = ast;
     }
-#line 1549 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1550 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 18:
-#line 162 "/root/compiler/PKUminic/src/sysy.y"
+#line 163 "/root/compiler/PKUminic/src/sysy.y"
         {
         auto ast = new FuncTypeAST();
         ast->functype = "void";
         (yyval.ast_val) = ast;
     }
-#line 1559 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1560 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 19:
-#line 169 "/root/compiler/PKUminic/src/sysy.y"
+#line 170 "/root/compiler/PKUminic/src/sysy.y"
                            {
         (yyval.ast_block) = ((yyvsp[-1].ast_block));
     }
-#line 1567 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1568 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 20:
-#line 172 "/root/compiler/PKUminic/src/sysy.y"
+#line 173 "/root/compiler/PKUminic/src/sysy.y"
              {
         auto ast = new BlockAST();//blockitemlist中为空
         (yyval.ast_block) = ast;
     }
-#line 1576 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1577 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 21:
-#line 178 "/root/compiler/PKUminic/src/sysy.y"
+#line 179 "/root/compiler/PKUminic/src/sysy.y"
                {
         auto ast = new BlockAST();
         ast->blockitemlist.push_back((yyvsp[0].ast_stmt));
         (yyval.ast_block) = ast;
     }
-#line 1586 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1587 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 22:
-#line 183 "/root/compiler/PKUminic/src/sysy.y"
+#line 184 "/root/compiler/PKUminic/src/sysy.y"
                              {
         (yyval.ast_block) = ((yyvsp[-1].ast_block));//左递归
         (yyval.ast_block)->blockitemlist.push_back((yyvsp[0].ast_stmt)); //将语句块放入
     }
-#line 1595 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1596 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 23:
-#line 190 "/root/compiler/PKUminic/src/sysy.y"
+#line 191 "/root/compiler/PKUminic/src/sysy.y"
           {
         (yyval.ast_stmt) = static_cast<StmtAST*>((yyvsp[0].ast_decl));
     }
-#line 1603 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1604 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 24:
-#line 193 "/root/compiler/PKUminic/src/sysy.y"
+#line 194 "/root/compiler/PKUminic/src/sysy.y"
           { (yyval.ast_stmt) = ((yyvsp[0].ast_stmt)); }
-#line 1609 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1610 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 25:
-#line 197 "/root/compiler/PKUminic/src/sysy.y"
+#line 198 "/root/compiler/PKUminic/src/sysy.y"
                 { (yyval.ast_stmt) = ((yyvsp[0].ast_stmt)); }
-#line 1615 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1616 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 27:
-#line 201 "/root/compiler/PKUminic/src/sysy.y"
+#line 202 "/root/compiler/PKUminic/src/sysy.y"
                     {
         auto ast = new ReturnStmtAST();
         ast->Exp = unique_ptr<ExpAST>((yyvsp[-1].ast_exp));
         (yyval.ast_stmt) = ast;
     }
-#line 1625 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1626 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 28:
-#line 208 "/root/compiler/PKUminic/src/sysy.y"
+#line 209 "/root/compiler/PKUminic/src/sysy.y"
                      {
-
+        (yyval.ast_stmt) = new AssignStmtAST(unique_ptr<LeftValAST>((yyvsp[-3].ast_lval)), unique_ptr<ExpAST>((yyvsp[-1].ast_exp)), yyget_lineno());
     }
-#line 1633 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1634 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 29:
-#line 213 "/root/compiler/PKUminic/src/sysy.y"
+#line 214 "/root/compiler/PKUminic/src/sysy.y"
             { 
         (yyval.ast_exp) = ((yyvsp[0].ast_exp)); 
     }
-#line 1641 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1642 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 30:
-#line 218 "/root/compiler/PKUminic/src/sysy.y"
+#line 219 "/root/compiler/PKUminic/src/sysy.y"
            {
         auto ast = new LeftValAST();
         ast->ident = unique_ptr<IdentifierAST>((yyvsp[0].ast_ident));
         (yyval.ast_lval) = ast;
     }
-#line 1651 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1652 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 31:
-#line 225 "/root/compiler/PKUminic/src/sysy.y"
+#line 226 "/root/compiler/PKUminic/src/sysy.y"
                     {
         auto ast = new PrimaryExpAST();
         ast->leftval = NULL; //表示该PrimaryExp为exp
         ast->exp = unique_ptr<ExpAST>((yyvsp[-1].ast_exp));
         (yyval.ast_exp) = ast;
     }
-#line 1662 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1663 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 32:
-#line 231 "/root/compiler/PKUminic/src/sysy.y"
+#line 232 "/root/compiler/PKUminic/src/sysy.y"
           {
         auto ast = new PrimaryExpAST();
         ast->leftval = unique_ptr<LeftValAST>((yyvsp[0].ast_lval));
         ast->exp = NULL;
         (yyval.ast_exp) = ast;
     }
-#line 1673 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1674 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 33:
-#line 237 "/root/compiler/PKUminic/src/sysy.y"
+#line 238 "/root/compiler/PKUminic/src/sysy.y"
             { 
         auto ast = new PrimaryExpAST();
         ast->number = ((yyvsp[0].int_val));
@@ -1681,32 +1682,33 @@ yyreduce:
         ast->exp = NULL;//表示该PrimaryExp为Number
         (yyval.ast_exp) = ast;
     }
-#line 1685 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1686 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 34:
-#line 247 "/root/compiler/PKUminic/src/sysy.y"
+#line 248 "/root/compiler/PKUminic/src/sysy.y"
            {
         auto ast = new IdentifierAST();
+        ast->line_num = yyget_lineno();
         ast->ident_name = *unique_ptr<string>((yyvsp[0].str_val));
         (yyval.ast_ident) = ast;
     }
-#line 1695 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1697 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 35:
-#line 254 "/root/compiler/PKUminic/src/sysy.y"
+#line 256 "/root/compiler/PKUminic/src/sysy.y"
                 { 
         auto ast = new UnaryExpAST();
         ast->primaryexp = unique_ptr<ExpAST>((yyvsp[0].ast_exp));
         ast->rhs = NULL;//表示该UnaryExp为PrimaryExp
         (yyval.ast_exp) = ast;
     }
-#line 1706 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1708 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 36:
-#line 260 "/root/compiler/PKUminic/src/sysy.y"
+#line 262 "/root/compiler/PKUminic/src/sysy.y"
                       {
         auto ast = new UnaryExpAST();
         ast->unaryop = ((yyvsp[-1].key_op));
@@ -1714,200 +1716,200 @@ yyreduce:
         ast->rhs = unique_ptr<ExpAST>((yyvsp[0].ast_exp));
         (yyval.ast_exp) = ast;
     }
-#line 1718 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1720 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 37:
-#line 269 "/root/compiler/PKUminic/src/sysy.y"
+#line 271 "/root/compiler/PKUminic/src/sysy.y"
               {
         (yyval.ast_exp) = new BinaryExpAST(unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
     }
-#line 1726 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1728 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 38:
-#line 272 "/root/compiler/PKUminic/src/sysy.y"
+#line 274 "/root/compiler/PKUminic/src/sysy.y"
                              {
         (yyval.ast_exp) = new BinaryExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
     }
-#line 1734 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1736 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 39:
-#line 277 "/root/compiler/PKUminic/src/sysy.y"
+#line 279 "/root/compiler/PKUminic/src/sysy.y"
              {
         (yyval.ast_exp) = new BinaryExpAST(unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
     }
-#line 1742 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1744 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 40:
-#line 280 "/root/compiler/PKUminic/src/sysy.y"
+#line 282 "/root/compiler/PKUminic/src/sysy.y"
                           {
         (yyval.ast_exp) = new BinaryExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
      }
-#line 1750 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1752 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 41:
-#line 285 "/root/compiler/PKUminic/src/sysy.y"
+#line 287 "/root/compiler/PKUminic/src/sysy.y"
              {
         (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
 
     }
-#line 1759 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1761 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 42:
-#line 289 "/root/compiler/PKUminic/src/sysy.y"
+#line 291 "/root/compiler/PKUminic/src/sysy.y"
                          {
         (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
      }
-#line 1767 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1769 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 43:
-#line 294 "/root/compiler/PKUminic/src/sysy.y"
+#line 296 "/root/compiler/PKUminic/src/sysy.y"
             {
         (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
     }
-#line 1775 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1777 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 44:
-#line 297 "/root/compiler/PKUminic/src/sysy.y"
+#line 299 "/root/compiler/PKUminic/src/sysy.y"
                           {
         (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
     }
-#line 1783 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1785 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 45:
-#line 302 "/root/compiler/PKUminic/src/sysy.y"
+#line 304 "/root/compiler/PKUminic/src/sysy.y"
             {
         (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
     }
-#line 1791 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1793 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 46:
-#line 305 "/root/compiler/PKUminic/src/sysy.y"
+#line 307 "/root/compiler/PKUminic/src/sysy.y"
                        {
         (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
     }
-#line 1799 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1801 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 47:
-#line 310 "/root/compiler/PKUminic/src/sysy.y"
+#line 312 "/root/compiler/PKUminic/src/sysy.y"
               {
         (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
     }
-#line 1807 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1809 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 48:
-#line 313 "/root/compiler/PKUminic/src/sysy.y"
+#line 315 "/root/compiler/PKUminic/src/sysy.y"
                        {
         (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)));
     }
-#line 1815 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1817 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 49:
-#line 318 "/root/compiler/PKUminic/src/sysy.y"
+#line 320 "/root/compiler/PKUminic/src/sysy.y"
                 {
         (yyval.int_val) = ((yyvsp[0].int_val));
     }
-#line 1823 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1825 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 50:
-#line 323 "/root/compiler/PKUminic/src/sysy.y"
+#line 325 "/root/compiler/PKUminic/src/sysy.y"
         { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1829 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1831 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 51:
-#line 324 "/root/compiler/PKUminic/src/sysy.y"
+#line 326 "/root/compiler/PKUminic/src/sysy.y"
         { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1835 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1837 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 52:
-#line 327 "/root/compiler/PKUminic/src/sysy.y"
+#line 329 "/root/compiler/PKUminic/src/sysy.y"
         { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1841 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1843 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 53:
-#line 328 "/root/compiler/PKUminic/src/sysy.y"
+#line 330 "/root/compiler/PKUminic/src/sysy.y"
         { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1847 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1849 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 54:
-#line 329 "/root/compiler/PKUminic/src/sysy.y"
+#line 331 "/root/compiler/PKUminic/src/sysy.y"
         { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1853 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1855 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 55:
-#line 330 "/root/compiler/PKUminic/src/sysy.y"
+#line 332 "/root/compiler/PKUminic/src/sysy.y"
         { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1859 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1861 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 56:
-#line 333 "/root/compiler/PKUminic/src/sysy.y"
+#line 335 "/root/compiler/PKUminic/src/sysy.y"
          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1865 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1867 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 57:
-#line 334 "/root/compiler/PKUminic/src/sysy.y"
+#line 336 "/root/compiler/PKUminic/src/sysy.y"
          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1871 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1873 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 58:
-#line 335 "/root/compiler/PKUminic/src/sysy.y"
+#line 337 "/root/compiler/PKUminic/src/sysy.y"
          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1877 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1879 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 59:
-#line 338 "/root/compiler/PKUminic/src/sysy.y"
+#line 340 "/root/compiler/PKUminic/src/sysy.y"
          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1883 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1885 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 60:
-#line 339 "/root/compiler/PKUminic/src/sysy.y"
+#line 341 "/root/compiler/PKUminic/src/sysy.y"
          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1889 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1891 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 61:
-#line 342 "/root/compiler/PKUminic/src/sysy.y"
+#line 344 "/root/compiler/PKUminic/src/sysy.y"
           { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1895 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1897 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 62:
-#line 343 "/root/compiler/PKUminic/src/sysy.y"
+#line 345 "/root/compiler/PKUminic/src/sysy.y"
          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1901 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1903 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 63:
-#line 344 "/root/compiler/PKUminic/src/sysy.y"
+#line 346 "/root/compiler/PKUminic/src/sysy.y"
          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 1907 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1909 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
 
-#line 1911 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1913 "/root/compiler/PKUminic/build/sysy.tab.cpp"
 
       default: break;
     }
@@ -2139,7 +2141,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 346 "/root/compiler/PKUminic/src/sysy.y"
+#line 348 "/root/compiler/PKUminic/src/sysy.y"
 
 
 

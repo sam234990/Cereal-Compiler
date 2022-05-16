@@ -69,6 +69,7 @@ CompUnit
     : FuncDef{
         auto comp_unit = make_unique<CompUnitAST>();
         comp_unit->func_def = unique_ptr<BaseAST>($1);
+        comp_unit->line_num = yyget_lineno();
         ast = move(comp_unit);
     };
 
@@ -78,7 +79,7 @@ Decl
     }
     |
     VarDecl';'{
-
+        $$ = ($1);
     }
     ;
 
@@ -206,7 +207,7 @@ ReturnStmt
 
 AssignStmt
     : LVal '=' Exp';'{
-
+        $$ = new AssignStmtAST(unique_ptr<LeftValAST>($1), unique_ptr<ExpAST>($3), yyget_lineno());
     };
 
 Exp
@@ -246,6 +247,7 @@ PrimaryExp
 Ident
     : IDENT{
         auto ast = new IdentifierAST();
+        ast->line_num = yyget_lineno();
         ast->ident_name = *unique_ptr<string>($1);
         $$ = ast;
     };

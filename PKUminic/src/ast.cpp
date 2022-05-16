@@ -6,9 +6,15 @@
 
 using namespace std;
 
+AssignStmtAST::AssignStmtAST(std::unique_ptr<LeftValAST> leftval, std::unique_ptr<ExpAST> Exp, int line_num)
+{
+    this->Exp = move(Exp);
+    this->line_num = line_num;
+    this->leftval = move(leftval);
+}
+
 // ==================== DefOneAST  Class ====================
 DefOneAST::DefOneAST(std::string varname, int line_num)
-
 {
     this->varname = varname;
     this->line_num = line_num;
@@ -32,26 +38,26 @@ DefOneInitAST::DefOneInitAST(string name, unique_ptr<ExpAST> exp, bool is_const,
     this->is_const = is_const;
     this->line_num = line_num;
     this->expvalue = move(exp);
-    this->constname = name;
+    this->varnameinit = name;
     // 实现同一作用域下变量重名判断
     auto &symbol_table = symbol::Scope_1->symboltable;
-    const auto &var_iter = symbol_table.find(constname);
+    const auto &var_iter = symbol_table.find(varnameinit);
     if (var_iter == symbol_table.end())
     { //如果为空,则添加到符号表中
         if (is_const)
         { //如果是const类型,则将is_const设置为true
             auto temp = new symbol::SymbolItem(true, false);
-            symbol_table.insert({constname, *temp}); // 对于constdefone赋值直接添加到符号表中.
+            symbol_table.insert({varnameinit, *temp}); // 对于constdefone赋值直接添加到符号表中.
         }
         else
         {
             auto temp = new symbol::SymbolItem(false, false);
-            symbol_table.insert({constname, *temp}); // 对于constdefone赋值直接添加到符号表中.
+            symbol_table.insert({varnameinit, *temp}); // 对于constdefone赋值直接添加到符号表中.
         }
     }
     else
     { //重名报错
-        symbol::SemanticError(line_num, "variable" + constname + "define repetition");
+        symbol::SemanticError(line_num, "variable" + varnameinit + "define repetition");
     }
 }
 

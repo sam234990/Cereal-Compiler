@@ -39,14 +39,13 @@ void FuncTypeAST::Dump(string &inputstr) const
 // ==================== BlockAST  Class ====================
 void BlockAST::Dump(string &inputstr) const
 {
-
     if (blockitemlist.size() == 0)
     { //如果里面为空直接返回
         return;
     }
 
     inputstr.append("%entry: \n");
-    cout << "-------blockitemlist.size():" << blockitemlist.size() << endl;
+    // cout << "-------blockitemlist.size():" << blockitemlist.size() << endl;
     // stmt->Dump(inputstr);
     for (int i = 0; i < blockitemlist.size(); i++)
     { //遍历每一个stmt
@@ -61,8 +60,21 @@ void BlockAST::Dump(string &inputstr) const
 void ReturnStmtAST::Dump(string &inputstr) const
 {
     string temp = Exp->Dump(inputstr);
-    cout << "ret" << endl;
+
     inputstr.append("  ret " + temp);
+    return;
+}
+
+void AssignStmtAST::Dump(string &inputstr) const
+{
+    //获取表达式右边symbol
+    string symbol_rhs = this->Exp->Dump(inputstr);
+    // this->leftval->Dump(inputstr);
+    string symbollval = this->leftval;
+
+    inputstr.append("  store " + symbol_rhs + ", @" + this->varnameinit + '\n');
+    
+
     return;
 }
 
@@ -72,35 +84,46 @@ void DeclareAST::Dump(string &inputstr) const
     { //如果里面为空直接返回
         return;
     }
-
     cout << define_list_.size() << endl;
     for (int i = 0; i < define_list_.size(); i++)
     { //遍历每一个define语句
-        cout << i << endl;
         define_list_[i]->Dump(inputstr);
     }
-
     return;
 }
 
-//
+// ==================== DefOneAST  Class ====================
+void DefOneAST::Dump(string &inputstr) const
+{ //仅声明变量,用alloc语句申请内存
+    inputstr.append("  @" + this->varname + " = alloc i32\n");
+    auto &item = symbol::Scope_1->symboltable[this->varname];
+    item.koopa_ir_name = '@' + this->varname;
+    return;
+}
+
+// ==================== DefOneInitAST  Class ====================
 void DefOneInitAST::Dump(string &inputstr) const
 {
-    
     if (this->is_const)
-    {//遍历到 const 时,应该计算右值的结果,并将结果写入到对应的符号表中
+    { //遍历到 const 时,应该计算右值的结果,并将结果写入到对应的符号表中
         int result = expvalue->cal();
-        auto &item = symbol::Scope_1->symboltable[constname];
+        auto &item = symbol::Scope_1->symboltable[this->varnameinit];
         item.result.push_back(result);
         // SymbolItem
         cout << "name" << endl;
         return;
-    }else
-    {//非const时, 应该遍历表达式,并将其赋值给当前语句
-
+    }
+    else
+    { //非const时,
+        //先用alloc语句申请内存
+        inputstr.append("  @" + this->varnameinit + " = alloc i32\n");
+        auto &item = symbol::Scope_1->symboltable[this->varnameinit];
+        item.koopa_ir_name = '@' + this->varnameinit;
+        //后用store存储起来。
+        string symbol_rhs = expvalue->Dump(inputstr);
+        inputstr.append("  store " + symbol_rhs + ", @" + this->varnameinit + '\n');
         return;
     }
-    
 }
 
 // ==================== LeftValAST  Class ====================
@@ -117,12 +140,29 @@ int LeftValAST::cal() const
 // ==================== IdentifierAST  Class ====================
 string IdentifierAST::Dump(string &inputstr) const
 {
-    int number;
+    //判断符号表中是否有该变量
+    auto &symbol_table = symbol::Scope_1->symboltable;
+    const auto &var_iter = symbol_table.find(ident_name);
+    if (var_iter == symbol_table.end())
+    { //如果不存在报错
+        symbol::SemanticError(line_num, "variable is not defined!");
+    }
     auto &item = symbol::Scope_1->symboltable[ident_name];
-    number = item.result.back();
-    cout << number << endl;
-    // auto &item = symbol::Scope_1.symboltable.find(ident_name);
-    return to_string(number);
+    if (item.is_const)
+    { //如果是const常量
+        return to_string(item.result.back());
+    }
+    else
+    {                  // 非const类型, load出来并返回
+        string temp;   //本行symbol
+        string expstr; //本行的命令
+        string symbol_rhs;
+        symbol_rhs = item.koopa_ir_name;
+        temp = "%" + to_string(symbolnum++);
+        expstr = "  " + temp + " = load " + symbol_rhs + "\n";
+        inputstr.append(expstr);
+        return temp;
+    }
 }
 
 int IdentifierAST::cal() const
@@ -186,12 +226,12 @@ string UnaryExpAST::Dump(string &inputstr) const
         case SUB:
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = sub 0, " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case NOT:
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = eq " + symbol_rhs + ", 0\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         default:
             break;
@@ -216,11 +256,13 @@ int UnaryExpAST::cal() const
             return num_rhs;
         case SUB:
             return -num_rhs;
-            break;
         case NOT:
             cout << "error: operation \"!\" is impremissible in const " << endl;
             return 0;
+        default:
+            break;
         }
+        return 0;
     }
     else
     { //该UnaryExp为PrimaryExp
@@ -242,27 +284,27 @@ string BinaryExpAST::Dump(string &inputstr) const
         case ADD: //
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = add " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case SUB:
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = sub " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case MULT: //
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = mul " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case DIV:
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = div " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case MOD:
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = mod " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         default:
             break;
@@ -323,45 +365,45 @@ string CondExpAST::Dump(string &inputstr) const
             expstr = expstr + "  " + temp_2 + " = ne 0, " + symbol_rhs + '\n';
             temp = "%" + to_string(symbolnum++); // 与运算获得结果
             expstr = expstr + "  " + temp + " = and " + temp_1 + ", " + temp_2 + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case OR: //
             temp_1 = "%" + to_string(symbolnum++);
             expstr = "  " + temp_1 + " = or " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = ne 0, " + temp_1 + "\n"; // 与0比较获得结果
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case NE: //
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = ne " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case EQ: //
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = eq " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case GT: //
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = gt " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case LT: //
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = lt " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case GE: //
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = ge " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         case LE: //
             temp = "%" + to_string(symbolnum++);
             expstr = "  " + temp + " = le " + symbol_lhs + ", " + symbol_rhs + "\n";
-            inputstr = inputstr.append(expstr);
+            inputstr.append(expstr);
             break;
         default:
             break;

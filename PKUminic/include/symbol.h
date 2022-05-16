@@ -20,6 +20,7 @@ public:
     bool is_const;//是否是const 类型
     bool is_array;
     vector<int> result;//如果是constdefone应该有结果。
+    string koopa_ir_name;
 
     SymbolItem(){};
     SymbolItem(bool is_c, bool is_a);
