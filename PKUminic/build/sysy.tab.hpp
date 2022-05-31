@@ -75,8 +75,13 @@ extern int yydebug;
     VOID = 273,
     RETURN = 274,
     CONST = 275,
-    IDENT = 276,
-    INT_CONST = 277
+    IF = 276,
+    ELSE = 277,
+    WHILE = 278,
+    BREAK = 279,
+    CONTINUE = 280,
+    IDENT = 281,
+    INT_CONST = 282
   };
 #endif
 
@@ -90,15 +95,24 @@ union YYSTYPE
     std::string *str_val;
     int int_val;
     BaseAST *ast_val;
+    CompUnitAST *ast_comp;
+    FuncTypeAST *ast_functype;
+    FuncFParamsListAST *ast_funcFlist;
+    FuncFParamAST *ast_funcF;
     ExpAST *ast_exp;
+    FuncRParamsListAST *ast_funcRlist;
+    FuncCallAST *ast_funcR;
     DeclareAST *ast_decl;
     DefineAST *ast_define; 
     StmtAST *ast_stmt;
-    BlockAST *ast_block;
+    BlockItemAST *ast_block;
     LeftValAST *ast_lval;
     IdentifierAST *ast_ident;
+    IdentArrayAST *ast_identarray;
+    InitValArrayAST *initvalarray;
+    std::vector<InitValArrayAST *> *initcalarraylist;
 
-#line 102 "/root/compiler/PKUminic/build/sysy.tab.hpp"
+#line 116 "/root/compiler/PKUminic/build/sysy.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

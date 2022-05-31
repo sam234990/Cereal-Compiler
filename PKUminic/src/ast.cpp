@@ -6,89 +6,279 @@
 
 using namespace std;
 
-AssignStmtAST::AssignStmtAST(std::unique_ptr<LeftValAST> leftval, std::unique_ptr<ExpAST> Exp, int line_num)
+// ==================== BaseAST  Class ====================
+BaseAST::BaseAST(int line_num)
 {
-    this->Exp = move(Exp);
     this->line_num = line_num;
-    this->leftval = move(leftval);
 }
 
-// ==================== DefOneAST  Class ====================
-DefOneAST::DefOneAST(std::string varname, int line_num)
+// ==================== ExpAST  Class ====================
+ExpAST::ExpAST(int line_num)
 {
-    this->varname = varname;
     this->line_num = line_num;
-    // 实现同一作用域下变量重名判断
-    auto &symbol_table = symbol::Scope_1->symboltable;
-    const auto &var_iter = symbol_table.find(varname);
-    if (var_iter == symbol_table.end())
-    { //如果为空,则添加到符号表中
-        auto temp = new symbol::SymbolItem(false, false);
-        symbol_table.insert({varname, *temp}); // 对于constdefone赋值直接添加到符号表中.
+}
+
+// ==================== LeftValAST  Class ====================
+LeftValAST::LeftValAST(unique_ptr<IdentifierAST> ident, unique_ptr<IdentArrayAST> identarray, int line_num) : ExpAST(line_num)
+{
+    if (ident == NULL)
+    {
+        this->ident = NULL;
     }
     else
-    { //重名报错
-        symbol::SemanticError(line_num, "variable" + varname + "define repetition");
+    {
+        this->ident = move(ident);
+    }
+
+    if (identarray == NULL)
+    {
+        this->identarray = NULL;
+    }
+    else
+    {
+        this->identarray = move(identarray);
     }
 }
 
-// ==================== DefOneInitAST  Class ====================
-DefOneInitAST::DefOneInitAST(string name, unique_ptr<ExpAST> exp, bool is_const, int line_num)
+// ==================== IdentifierAST  Class ====================
+IdentifierAST::IdentifierAST(string ident_name, int line_num) : ExpAST(line_num)
 {
-    this->is_const = is_const;
-    this->line_num = line_num;
-    this->expvalue = move(exp);
-    this->varnameinit = name;
-    // 实现同一作用域下变量重名判断
-    auto &symbol_table = symbol::Scope_1->symboltable;
-    const auto &var_iter = symbol_table.find(varnameinit);
-    if (var_iter == symbol_table.end())
-    { //如果为空,则添加到符号表中
-        if (is_const)
-        { //如果是const类型,则将is_const设置为true
-            auto temp = new symbol::SymbolItem(true, false);
-            symbol_table.insert({varnameinit, *temp}); // 对于constdefone赋值直接添加到符号表中.
-        }
-        else
-        {
-            auto temp = new symbol::SymbolItem(false, false);
-            symbol_table.insert({varnameinit, *temp}); // 对于constdefone赋值直接添加到符号表中.
-        }
+    this->ident_name = ident_name;
+}
+
+// ==================== IdentArrayAST  Class ====================
+IdentArrayAST::IdentArrayAST(string ident_name, int line_num) : ExpAST(line_num)
+{
+    this->ident_name = ident_name;
+}
+
+// ==================== PrimaryExpAST  Class ====================
+PrimaryExpAST::PrimaryExpAST(int number, unique_ptr<ExpAST> exp,
+                             unique_ptr<LeftValAST> leftval, int line_num) : ExpAST(line_num)
+{
+    this->number = number;
+    if (exp == NULL)
+    {
+        this->exp = NULL;
     }
     else
-    { //重名报错
-        symbol::SemanticError(line_num, "variable" + varnameinit + "define repetition");
+    {
+        this->exp = move(exp);
+    }
+
+    if (leftval == NULL)
+    {
+        this->leftval = NULL;
+    }
+    else
+    {
+        this->leftval = move(leftval);
+    }
+}
+
+// ==================== UnaryExpAST  Class ====================
+UnaryExpAST::UnaryExpAST(unique_ptr<ExpAST> primaryexp, int unaryop, unique_ptr<ExpAST> rhs,
+                         unique_ptr<FuncCallAST> funccall, int line_num) : ExpAST(line_num)
+{
+    this->unaryop = unaryop;
+
+    if (primaryexp == NULL)
+    {
+        this->primaryexp = NULL;
+    }
+    else
+    {
+        this->primaryexp = move(primaryexp);
+    }
+
+    if (rhs == NULL)
+    {
+        this->rhs = NULL;
+    }
+    else
+    {
+        this->rhs = move(rhs);
+    }
+
+    if (funccall == NULL)
+    {
+        this->funccall = NULL;
+    }
+    else
+    {
+        this->funccall = move(funccall);
+    }
+}
+
+// ==================== FuncCallAST  Class ====================
+FuncCallAST::FuncCallAST(std::string ident_name, std::unique_ptr<FuncRParamsListAST> funcrparamslist, int line_num)
+{
+    this->ident_name = ident_name;
+    this->line_num = line_num;
+    if (funcrparamslist == NULL)
+    {
+        this->funcrparamslist = NULL;
+    }
+    else
+    {
+        this->funcrparamslist = move(funcrparamslist);
     }
 }
 
 // ==================== BinaryExpAST  Class ====================
-BinaryExpAST::BinaryExpAST(unique_ptr<ExpAST> first)
+BinaryExpAST::BinaryExpAST(unique_ptr<ExpAST> l, int oper, unique_ptr<ExpAST> r,
+                           unique_ptr<ExpAST> first, int line_num) : ExpAST(line_num)
 {
-    firstformexp = move(first);
-    rhs = NULL; //表示该MultExp为UnaryExp
-    lhs = NULL; //表示该MultExp为UnaryExp
-}
+    this->operators = oper;
+    if (first == NULL)
+    {
+        this->firstformexp = NULL; //表示该MultExp为第二种
+    }
+    else
+    {
+        this->firstformexp = move(first);
+    }
 
-BinaryExpAST::BinaryExpAST(unique_ptr<ExpAST> l, int oper, unique_ptr<ExpAST> r)
-{
-    firstformexp = NULL; //表示该MultExp为第二种
-    lhs = move(l);
-    operators = oper;
-    rhs = move(r);
+    if (l == NULL)
+    {
+        this->lhs = NULL;
+    }
+    else
+    {
+        this->lhs = move(l);
+    }
+
+    if (r == NULL)
+    {
+        this->lhs = NULL; //表示该MultExp为UnaryExp
+    }
+    else
+    {
+        this->rhs = move(r);
+    }
 }
 
 // ==================== CondExpAST  Class ====================
-CondExpAST::CondExpAST(unique_ptr<ExpAST> first)
+CondExpAST::CondExpAST(unique_ptr<ExpAST> l, int oper, unique_ptr<ExpAST> r,
+                       unique_ptr<ExpAST> first, int line_num) : ExpAST(line_num)
 {
-    firstformexp = move(first);
-    rhs = NULL; //表示该MultExp为UnaryExp
-    lhs = NULL; //表示该MultExp为UnaryExp
+    this->condoper = oper;
+    if (first == NULL)
+    {
+        this->firstformexp = NULL; //表示该 CondExpAST 为第二种
+    }
+    else
+    {
+        this->firstformexp = move(first);
+    }
+
+    if (l == NULL)
+    {
+        this->lhs = NULL;
+    }
+    else
+    {
+        this->lhs = move(l);
+    }
+
+    if (r == NULL)
+    {
+        this->lhs = NULL; //表示该 CondExpAST 为第一种形式的exp
+    }
+    else
+    {
+        this->rhs = move(r);
+    }
 }
 
-CondExpAST::CondExpAST(unique_ptr<ExpAST> l, int oper, unique_ptr<ExpAST> r)
+// ==================== FuncFParamAST  Class ====================
+FuncFParamAST::FuncFParamAST(string ident_name, int line_num) : BaseAST(line_num)
 {
-    firstformexp = NULL; //表示该MultExp为第二种
-    lhs = move(l);
-    condoper = oper;
-    rhs = move(r);
+    this->ident_name = ident_name;
+}
+
+// ==================== StmtAST  Class ====================
+StmtAST::StmtAST(int line_num) : BaseAST(line_num) {}
+
+// ==================== AssignStmtAST  Class ====================
+AssignStmtAST::AssignStmtAST(std::unique_ptr<LeftValAST> leftval,
+                             std::unique_ptr<ExpAST> Exp, int line_num) : StmtAST(line_num)
+{
+    this->Exp = move(Exp);
+    this->leftval = move(leftval);
+}
+
+// ==================== IfElseStmtAST  Class ====================
+IfElseStmtAST::IfElseStmtAST(unique_ptr<ExpAST> Exp, unique_ptr<StmtAST> stmt1,
+                             unique_ptr<StmtAST> stmt2, int line_num) : StmtAST(line_num)
+{
+    this->Exp = move(Exp);
+    this->stmt1 = move(stmt1);
+    if (stmt2 == NULL)
+    {
+        this->stmt2 = NULL;
+    }
+    else
+    {
+        this->stmt2 = move(stmt2);
+    }
+}
+
+// ==================== WhileStmtAST  Class ====================
+WhileStmtAST::WhileStmtAST(unique_ptr<ExpAST> Exp, unique_ptr<StmtAST> stmt,
+                           int line_num) : StmtAST(line_num)
+{
+    this->Exp = move(Exp);
+    this->stmt = move(stmt);
+}
+
+// ==================== ExpstmtAST  Class ====================
+ExpstmtAST::ExpstmtAST(std::unique_ptr<ExpAST> Exp, int line_num) : StmtAST(line_num)
+{
+    this->Exp = move(Exp);
+}
+
+// ==================== DefOneAST  Class ====================
+DefOneAST::DefOneAST(std::string varname, int line_num) : DefineAST(line_num)
+{
+    this->varname = varname;
+}
+
+// ==================== DefOneInitAST  Class ====================
+DefOneInitAST::DefOneInitAST(string name, unique_ptr<ExpAST> exp,
+                             bool is_const, int line_num) : DefineAST(line_num)
+{
+    this->is_const = is_const;
+    this->expvalue = move(exp);
+    this->varnameinit = name;
+}
+
+// ==================== DefArray  Class ====================
+DefArray::DefArray(unique_ptr<IdentArrayAST> identarray, int line_num) : DefineAST(line_num)
+{
+    this->identarray = move(identarray);
+}
+
+// ==================== DefArrayInitAST  Class ====================
+DefArrayInitAST::DefArrayInitAST(unique_ptr<IdentArrayAST> identarray, unique_ptr<InitValArrayAST> initvalarray,
+                                 bool is_const, int line_num) : DefineAST(line_num)
+{
+    this->is_const = is_const;
+    this->identarray = move(identarray);
+    this->initvalarray = move(initvalarray);
+}
+
+// ==================== InitValArrayAST  Class ====================
+InitValArrayAST::InitValArrayAST(bool is_exp, unique_ptr<ExpAST> initval, int line_num)
+{
+    this->is_exp = is_exp;
+    this->line_num = line_num;
+    if (initval == NULL)
+    {
+        this->initval = NULL;
+    }
+    else
+    {
+        this->initval = move(initval);
+    }
 }

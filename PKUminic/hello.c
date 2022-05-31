@@ -1,12 +1,8 @@
-// int main() {
-//   return 1 <= 2;
-// }
-// int main() {
-//   const int x = 3 + 4 * (5 % 6);
-//   return x;
-// }
-int main() {
-  int x = 10;
-  x = x + 1;
-  return x;
+const int d[4][2] = {0, 1, {2}, {5}, 7, 8};
+int c[2][2];
+int main()
+{
+    const int a[2][3][4] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, {12}};
+    int d[4][2] = {{0}, 2, 3, 4, 5, 6, 7};
+    return a[1][0][3];
 }

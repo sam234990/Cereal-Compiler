@@ -29,13 +29,22 @@ using namespace std;
     std::string *str_val;
     int int_val;
     BaseAST *ast_val;
+    CompUnitAST *ast_comp;
+    FuncTypeAST *ast_functype;
+    FuncFParamsListAST *ast_funcFlist;
+    FuncFParamAST *ast_funcF;
     ExpAST *ast_exp;
+    FuncRParamsListAST *ast_funcRlist;
+    FuncCallAST *ast_funcR;
     DeclareAST *ast_decl;
     DefineAST *ast_define; 
     StmtAST *ast_stmt;
-    BlockAST *ast_block;
+    BlockItemAST *ast_block;
     LeftValAST *ast_lval;
     IdentifierAST *ast_ident;
+    IdentArrayAST *ast_identarray;
+    InitValArrayAST *initvalarray;
+    std::vector<InitValArrayAST *> *initcalarraylist;
 }
 
 %token <key_op> ADD SUB NOT 
@@ -44,34 +53,58 @@ using namespace std;
 %token <key_op> EQ NE 
 %token <key_op> AND 
 %token <key_op> OR
-%token <key_op> INT VOID RETURN CONST
 
+%token <key_op> INT VOID RETURN CONST IF ELSE WHILE BREAK CONTINUE
 
 %token <str_val> IDENT
 %token <int_val> INT_CONST
 
 %type <ast_decl> Decl ConstDecl VarDecl
-%type <ast_define> ConstDef ConstDefOne Def DefOne
-%type <ast_val> FuncDef FuncType 
-%type <ast_stmt> Stmt  BlockItem ReturnStmt AssignStmt
-%type <ast_block>Block BlockItemList
+%type <ast_define> ConstDef ConstDefOne ConstDefArray Def DefOne DefArray
+%type <ast_val> FuncDef 
+%type <ast_val> Root 
+%type <ast_comp> CompUnit
+%type <ast_funcFlist> FuncFParamsList
+%type <ast_funcF> FuncFParam FuncFParamOne 
+%type <ast_stmt> Stmt BlockItem ReturnStmt AssignStmt IfStmt WhileStmt
+%type <ast_block> Block BlockItemList
 %type <ast_ident> Ident
+%type <ast_identarray> IdentArray
 %type <ast_lval> LVal
+%type <initvalarray> InitValArray
+%type <initcalarraylist> InitValArrayList
 
 %type <ast_exp> Exp UnaryExp PrimaryExp AddExp MultExp RelExp EqExp LAndExp LOrExp
 %type <ast_exp> InitVal
+%type <ast_funcRlist> FuncRParamsList
+%type <ast_funcR> FuncCall
 %type <int_val> Number 
 %type <key_op> UnaryOp AddOp MultOp EqualOp RelOp
 %type <key_op> BType
 
 %%
+Root: CompUnit {
+    ast = unique_ptr<CompUnitAST>($1);
+}
+
 CompUnit
-    : FuncDef{
-        auto comp_unit = make_unique<CompUnitAST>();
-        comp_unit->func_def = unique_ptr<BaseAST>($1);
-        comp_unit->line_num = yyget_lineno();
-        ast = move(comp_unit);
+    : Decl {
+        $$ = new CompUnitAST(yyget_lineno());
+        $$->compunitlist.push_back(static_cast<BaseAST*>($1));
+    }
+    | CompUnit Decl {
+        $$ = ($1);//左递归
+        $$->compunitlist.push_back(static_cast<BaseAST*>($2)); //将全局声明放入
+    }
+    | FuncDef{ 
+        $$ = new CompUnitAST(yyget_lineno());
+        $$->compunitlist.push_back(static_cast<BaseAST*>($1));
+    }
+    | CompUnit FuncDef{
+        $$ = ($1);//左递归
+        $$->compunitlist.push_back(static_cast<BaseAST*>($2)); //将函数块放入
     };
+
 
 Decl
     : ConstDecl';'{//将分号移至上方, 使 constdecl变成左递归。
@@ -85,7 +118,7 @@ Decl
 
 ConstDecl
     : CONST BType ConstDef {//为左值新建一个声明类
-        auto const_decl = new DeclareAST();
+        auto const_decl = new DeclareAST(yyget_lineno());
         const_decl->btype = ($2);
         const_decl->define_list_.push_back(($3));//并将定义语句放入其中
         $$ = const_decl;
@@ -103,20 +136,68 @@ BType
 
 ConstDef
     : ConstDefOne{ $$ = ($1); }
-    /* |ConstDefArray */
-    ;
+    | ConstDefArray{ $$ = ($1); };
+    
 
 ConstDefOne
     : IDENT '=' InitVal{
         $$ = new DefOneInitAST(*unique_ptr<string>($1), unique_ptr<ExpAST>($3), true, yyget_lineno());
     };
 
+ConstDefArray
+    : IdentArray '=' InitValArray{
+        $$ = new DefArrayInitAST(unique_ptr<IdentArrayAST>($1), unique_ptr<InitValArrayAST>($3), true, yyget_lineno());
+    };
+
+IdentArray
+    : IDENT '[' Exp ']'{
+        $$ = new IdentArrayAST(*unique_ptr<string>($1), yyget_lineno());
+        $$->shape_list.push_back($3);
+    }
+    | IdentArray '[' Exp ']'{//左递归 将数组维数加入至数组中
+        $$ = ($1);
+        $$->shape_list.push_back($3);
+    };
+
+InitValArray
+    : '{' '}' {
+        $$ = new InitValArrayAST(false, NULL, yyget_lineno());
+    }
+    | '{' InitValArrayList '}' {
+        $$ = new InitValArrayAST(false, NULL, yyget_lineno());
+        $$->initvalarraylist.swap(*$2);
+        delete $2;
+    };
+
+//InitValArrayList 为一个 vector，其基本元素为 InitValArray。
+//InitValArray 可以为 InitVal、InitValArray
+InitValArrayList
+    : InitVal{
+        $$ = new vector<InitValArrayAST *>;
+        $$->push_back(new InitValArrayAST(true, unique_ptr<ExpAST>($1), yyget_lineno()));
+    }
+    | InitValArrayList ',' InitVal{
+        $$ = ($1);
+        $$->push_back(new InitValArrayAST(true, unique_ptr<ExpAST>($3), yyget_lineno()));
+    }
+    | InitValArray{
+        $$ = new vector<InitValArrayAST *>;
+        $$->push_back($1);
+    }
+    | InitValArrayList ',' InitValArray{
+        $$ = ($1);
+        $$->push_back($3);
+    };
+
+
 InitVal
-    : AddExp{ $$ = ($1); };//用 InitVal 和 ConstInitArray 代替 ConstExp
+    : Exp{ //这里用了addexp,应该接exp。需修改TODO
+        $$ = ($1); 
+    };//用 InitVal 和 ConstInitArray 代替 ConstExp
 
 VarDecl
     : BType Def {
-        auto var_decl = new DeclareAST();
+        auto var_decl = new DeclareAST(yyget_lineno());
         var_decl->btype = ($1);
         var_decl->define_list_.push_back(($2));//并将定义语句放入其中
         $$ = var_decl;
@@ -130,40 +211,83 @@ VarDecl
 Def
     : DefOne{
         $$ = ($1);
+    }
+    | DefArray{
+        $$ = ($1);
     };
 
 DefOne
     : IDENT '=' InitVal{
         $$ = new DefOneInitAST(*unique_ptr<string>($1), unique_ptr<ExpAST>($3), false, yyget_lineno());
     }
-    |
-    IDENT{
+    | IDENT{
         $$ = new DefOneAST(*unique_ptr<string>($1), yyget_lineno());
     };
 
-
+DefArray
+    : IdentArray '=' InitValArray{
+        $$ = new DefArrayInitAST(unique_ptr<IdentArrayAST>($1), unique_ptr<InitValArrayAST>($3), false, yyget_lineno());
+    }
+    | IdentArray{
+        $$ = new DefArray(unique_ptr<IdentArrayAST>($1), yyget_lineno());
+    }
 
 
 FuncDef
-    : FuncType IDENT '(' ')' Block{
-        auto ast = new FuncDefAST();
-        ast->func_type = unique_ptr<BaseAST>($1);
+    : BType IDENT '(' ')' Block{
+        auto ast = new FuncDefAST(yyget_lineno());
+        ast->func_type = "int";
         ast->ident = *unique_ptr<string>($2);
+        ast->funcfparamlist = NULL;
         ast->block = unique_ptr<StmtAST>($5);
         $$ = ast;
-    };
-
-FuncType
-    : INT{
-        auto ast = new FuncTypeAST();
-        ast->functype = "int";
+    }
+    | BType IDENT '(' FuncFParamsList ')' Block{
+        auto ast = new FuncDefAST(yyget_lineno());
+        ast->func_type = "int";
+        ast->ident = *unique_ptr<string>($2);
+        ast->funcfparamlist = unique_ptr<FuncFParamsListAST>($4);
+        ast->block = unique_ptr<StmtAST>($6);
         $$ = ast;
     }
-    |
-    VOID{
-        auto ast = new FuncTypeAST();
-        ast->functype = "void";
+    | VOID IDENT '(' ')' Block{
+        auto ast = new FuncDefAST(yyget_lineno());
+        ast->func_type = "void";
+        // ast->func_type = unique_ptr<FuncTypeAST>($1);
+        ast->ident = *unique_ptr<string>($2);
+        ast->funcfparamlist = NULL;
+        ast->block = unique_ptr<StmtAST>($5);
         $$ = ast;
+    }
+    | VOID IDENT '(' FuncFParamsList ')' Block{
+        auto ast = new FuncDefAST(yyget_lineno());
+        ast->func_type = "void";
+        // ast->func_type = unique_ptr<FuncTypeAST>($1);
+        ast->ident = *unique_ptr<string>($2);
+        ast->funcfparamlist = unique_ptr<FuncFParamsListAST>($4);
+        ast->block = unique_ptr<StmtAST>($6);
+        $$ = ast;
+    }
+    ;
+
+FuncFParamsList
+    : FuncFParam{
+        $$ = new FuncFParamsListAST(yyget_lineno());
+        $$->funcfparamlist.push_back($1);
+
+    }
+    | FuncFParamsList ',' FuncFParam{
+        $$ = ($1);
+        $$->funcfparamlist.push_back($3);//左递归
+    };
+
+FuncFParam
+    : FuncFParamOne;
+    
+
+FuncFParamOne
+    : BType IDENT{
+        $$ = new FuncFParamAST(*unique_ptr<string>($2), yyget_lineno());
     };
 
 Block
@@ -171,13 +295,13 @@ Block
         $$ = ($2);
     }
     | '{' '}'{
-        auto ast = new BlockAST();//blockitemlist中为空
+        auto ast = new BlockItemAST(yyget_lineno());//blockitemlist中为空
         $$ = ast;
     };
 
 BlockItemList
     : BlockItem{
-        auto ast = new BlockAST();
+        auto ast = new BlockItemAST(yyget_lineno());
         ast->blockitemlist.push_back($1);
         $$ = ast;
     }
@@ -195,19 +319,54 @@ BlockItem
 
 
 Stmt
-    : ReturnStmt{ $$ = ($1); }
-    | AssignStmt;
+    : ReturnStmt
+    | AssignStmt
+    | IfStmt
+    | WhileStmt
+    | Block{
+        $$ = static_cast<StmtAST*>($1);
+    }
+    | Exp ';'{
+        $$ = static_cast<StmtAST*>(new ExpstmtAST(unique_ptr<ExpAST>($1), yyget_lineno()));
+    }
+    | BREAK ';'{
+        $$ = static_cast<StmtAST*>(new BreakstmtAST(yyget_lineno()));
+    }
+    | CONTINUE ';'{
+        $$ = static_cast<StmtAST*>(new ContinuestmtAST(yyget_lineno()));
+    }
+    | ';'{
+        $$ = static_cast<StmtAST*>(new VoidstmtAST(yyget_lineno()));
+    };
 
 ReturnStmt
     : RETURN Exp ';'{
-        auto ast = new ReturnStmtAST();
+        auto ast = new ReturnStmtAST(yyget_lineno());
         ast->Exp = unique_ptr<ExpAST>($2);
+        $$ = ast;
+    }
+    | RETURN ';'{
+        auto ast = new ReturnStmtAST(yyget_lineno());
+        ast->Exp = NULL;//表示该部分无返回值
         $$ = ast;
     };
 
 AssignStmt
     : LVal '=' Exp';'{
         $$ = new AssignStmtAST(unique_ptr<LeftValAST>($1), unique_ptr<ExpAST>($3), yyget_lineno());
+    };
+
+IfStmt
+    : IF '(' Exp ')' Stmt{
+        $$ = new IfElseStmtAST(unique_ptr<ExpAST>($3), unique_ptr<StmtAST>($5), NULL, yyget_lineno());
+    }
+    | IF '(' Exp ')' Stmt ELSE Stmt{
+        $$ = new IfElseStmtAST(unique_ptr<ExpAST>($3), unique_ptr<StmtAST>($5), unique_ptr<StmtAST>($7), yyget_lineno());
+    };
+
+WhileStmt
+    : WHILE '(' Exp ')' Stmt{
+        $$ = new WhileStmtAST(unique_ptr<ExpAST>($3), unique_ptr<StmtAST>($5), yyget_lineno());
     };
 
 Exp
@@ -217,103 +376,107 @@ Exp
 
 LVal
     : Ident{
-        auto ast = new LeftValAST();
-        ast->ident = unique_ptr<IdentifierAST>($1);
-        $$ = ast;
+        $$ = new LeftValAST(unique_ptr<IdentifierAST>($1), NULL, yyget_lineno());
+    }
+    | IdentArray{
+        $$ = new LeftValAST(NULL, unique_ptr<IdentArrayAST>($1), yyget_lineno());
     };
 
 PrimaryExp
-    : '(' AddExp ')'{
-        auto ast = new PrimaryExpAST();
-        ast->leftval = NULL; //表示该PrimaryExp为exp
-        ast->exp = unique_ptr<ExpAST>($2);
-        $$ = ast;
+    : '(' Exp ')'{
+        $$ = new PrimaryExpAST(0, unique_ptr<ExpAST>($2), NULL, yyget_lineno());
     }
     | LVal{
-        auto ast = new PrimaryExpAST();
-        ast->leftval = unique_ptr<LeftValAST>($1);
-        ast->exp = NULL;
-        $$ = ast;
+        $$ = new PrimaryExpAST(0, NULL, unique_ptr<LeftValAST>($1), yyget_lineno());
     }
     | Number{ 
-        auto ast = new PrimaryExpAST();
-        ast->number = ($1);
-        ast->leftval = NULL;
-        ast->exp = NULL;//表示该PrimaryExp为Number
-        $$ = ast;
+        $$ = new PrimaryExpAST(($1), NULL, NULL, yyget_lineno());
     };
 
 
 Ident
     : IDENT{
-        auto ast = new IdentifierAST();
-        ast->line_num = yyget_lineno();
-        ast->ident_name = *unique_ptr<string>($1);
-        $$ = ast;
+        $$ = new IdentifierAST(*unique_ptr<string>($1), yyget_lineno());
     };
 
 UnaryExp
     : PrimaryExp{ 
-        auto ast = new UnaryExpAST();
-        ast->primaryexp = unique_ptr<ExpAST>($1);
-        ast->rhs = NULL;//表示该UnaryExp为PrimaryExp
-        $$ = ast;
+        $$ = new UnaryExpAST(unique_ptr<ExpAST>($1), 0, NULL, NULL, yyget_lineno());
+        
     }
     | UnaryOp UnaryExp{
-        auto ast = new UnaryExpAST();
-        ast->unaryop = ($1);
-        ast->primaryexp = NULL;//表示该UnaryExp为第二种
-        ast->rhs = unique_ptr<ExpAST>($2);
-        $$ = ast;
+        $$ = new UnaryExpAST(NULL, ($1), unique_ptr<ExpAST>($2), NULL, yyget_lineno());
+        
+    }
+    | FuncCall{
+        $$ = new UnaryExpAST(NULL, 0, NULL, unique_ptr<FuncCallAST>($1), yyget_lineno());
+    };
+
+FuncCall
+    : IDENT '(' FuncRParamsList ')'{
+        $$ = new FuncCallAST(*unique_ptr<string>($1), unique_ptr<FuncRParamsListAST>($3), yyget_lineno());
+    }
+    | IDENT '(' ')'{
+        $$ = new FuncCallAST(*unique_ptr<string>($1), NULL, yyget_lineno());
+    } ;
+
+FuncRParamsList
+    : Exp {
+        $$ = new FuncRParamsListAST(yyget_lineno());
+        $$->rparamslist.push_back($1);
+    }
+    | FuncRParamsList ',' Exp {
+        $$ = ($1);
+        $$->rparamslist.push_back($3);
     };
 
 MultExp
     : UnaryExp{
-        $$ = new BinaryExpAST(unique_ptr<ExpAST>($1));
+        $$ = new BinaryExpAST(NULL, 0, NULL, unique_ptr<ExpAST>($1), yyget_lineno());
     }
     | MultExp MultOp UnaryExp{
-        $$ = new BinaryExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3));
+        $$ = new BinaryExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3), NULL, yyget_lineno());
     };
 
 AddExp
     : MultExp{
-        $$ = new BinaryExpAST(unique_ptr<ExpAST>($1));
+        $$ = new BinaryExpAST(NULL, 0, NULL, unique_ptr<ExpAST>($1), yyget_lineno());
     } 
     | AddExp AddOp MultExp{
-        $$ = new BinaryExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3));
+        $$ = new BinaryExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3), NULL, yyget_lineno());
      };
 
 RelExp
     :  AddExp{
-        $$ = new CondExpAST(unique_ptr<ExpAST>($1));
+        $$ = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>($1), yyget_lineno());
 
     }
     | RelExp RelOp AddExp{
-        $$ = new CondExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3));
+        $$ = new CondExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3), NULL, yyget_lineno());
      };
 
 EqExp
     : RelExp{
-        $$ = new CondExpAST(unique_ptr<ExpAST>($1));
+        $$ = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>($1), yyget_lineno());
     }
     | EqExp EqualOp RelExp{
-        $$ = new CondExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3));
+        $$ = new CondExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3), NULL, yyget_lineno());
     };
 
 LAndExp
     : EqExp {
-        $$ = new CondExpAST(unique_ptr<ExpAST>($1));
+        $$ = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>($1), yyget_lineno());
     }
     | LAndExp AND EqExp{
-        $$ = new CondExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3));
+        $$ = new CondExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3), NULL, yyget_lineno());
     };
     
 LOrExp
     : LAndExp {
-        $$ = new CondExpAST(unique_ptr<ExpAST>($1));
+        $$ = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>($1), yyget_lineno());
     }
     | LOrExp OR LAndExp{
-        $$ = new CondExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3));
+        $$ = new CondExpAST(unique_ptr<ExpAST>($1), ($2), unique_ptr<ExpAST>($3), NULL, yyget_lineno());
     }; 
 
 Number

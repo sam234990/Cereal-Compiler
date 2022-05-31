@@ -1,9 +1,141 @@
+decl @getint(): i32
+decl @getch(): i32
+decl @getarray(*i32): i32
+decl @putint(i32)
+decl @putch(i32)
+decl @putarray(i32, *i32)
+decl @starttime()
+decl @stoptime()
+
+global @d1 = alloc [[i32, 2], 4], {0, 1, {2, 0}, {5, 0}, 7, 8}
+
+global @c1 = alloc [[i32, 2], 2], zeroinit
+
 fun @main(): i32 {
 %entry: 
-  @x = alloc i32
-  store 10, @x
-  %0 = load @x
-  %1 = add %0, 1
-  %2 = load @x
-  ret %2
+  @a1 = alloc [[[i32, 4], 3], 2]
+  %0 = getelemptr @a1, 0
+  %1 = getelemptr %0, 0
+  %2 = getelemptr %1, 0
+  store 0, %2
+  %3 = getelemptr @a1, 0
+  %4 = getelemptr %3, 0
+  %5 = getelemptr %4, 1
+  store 1, %5
+  %6 = getelemptr @a1, 0
+  %7 = getelemptr %6, 0
+  %8 = getelemptr %7, 2
+  store 2, %8
+  %9 = getelemptr @a1, 0
+  %10 = getelemptr %9, 0
+  %11 = getelemptr %10, 3
+  store 3, %11
+  %12 = getelemptr @a1, 0
+  %13 = getelemptr %12, 1
+  %14 = getelemptr %13, 0
+  store 4, %14
+  %15 = getelemptr @a1, 0
+  %16 = getelemptr %15, 1
+  %17 = getelemptr %16, 1
+  store 5, %17
+  %18 = getelemptr @a1, 0
+  %19 = getelemptr %18, 1
+  %20 = getelemptr %19, 2
+  store 6, %20
+  %21 = getelemptr @a1, 0
+  %22 = getelemptr %21, 1
+  %23 = getelemptr %22, 3
+  store 7, %23
+  %24 = getelemptr @a1, 0
+  %25 = getelemptr %24, 2
+  %26 = getelemptr %25, 0
+  store 8, %26
+  %27 = getelemptr @a1, 0
+  %28 = getelemptr %27, 2
+  %29 = getelemptr %28, 1
+  store 9, %29
+  %30 = getelemptr @a1, 0
+  %31 = getelemptr %30, 2
+  %32 = getelemptr %31, 2
+  store 10, %32
+  %33 = getelemptr @a1, 0
+  %34 = getelemptr %33, 2
+  %35 = getelemptr %34, 3
+  store 11, %35
+  %36 = getelemptr @a1, 1
+  %37 = getelemptr %36, 0
+  %38 = getelemptr %37, 0
+  store 12, %38
+  %39 = getelemptr @a1, 1
+  %40 = getelemptr %39, 0
+  %41 = getelemptr %40, 1
+  store 0, %41
+  %42 = getelemptr @a1, 1
+  %43 = getelemptr %42, 0
+  %44 = getelemptr %43, 2
+  store 0, %44
+  %45 = getelemptr @a1, 1
+  %46 = getelemptr %45, 0
+  %47 = getelemptr %46, 3
+  store 0, %47
+  %48 = getelemptr @a1, 1
+  %49 = getelemptr %48, 1
+  %50 = getelemptr %49, 0
+  store 0, %50
+  %51 = getelemptr @a1, 1
+  %52 = getelemptr %51, 1
+  %53 = getelemptr %52, 1
+  store 0, %53
+  %54 = getelemptr @a1, 1
+  %55 = getelemptr %54, 1
+  %56 = getelemptr %55, 2
+  store 0, %56
+  %57 = getelemptr @a1, 1
+  %58 = getelemptr %57, 1
+  %59 = getelemptr %58, 3
+  store 0, %59
+  %60 = getelemptr @a1, 1
+  %61 = getelemptr %60, 2
+  %62 = getelemptr %61, 0
+  store 0, %62
+  %63 = getelemptr @a1, 1
+  %64 = getelemptr %63, 2
+  %65 = getelemptr %64, 1
+  store 0, %65
+  %66 = getelemptr @a1, 1
+  %67 = getelemptr %66, 2
+  %68 = getelemptr %67, 2
+  store 0, %68
+  %69 = getelemptr @a1, 1
+  %70 = getelemptr %69, 2
+  %71 = getelemptr %70, 3
+  store 0, %71
+  @d2 = alloc [[i32, 2], 4]
+  %72 = getelemptr @d2, 0
+  %73 = getelemptr %72, 0
+  store 0, %73
+  %74 = getelemptr @d2, 1
+  %75 = getelemptr %74, 0
+  store 2, %75
+  %76 = getelemptr @d2, 1
+  %77 = getelemptr %76, 1
+  store 3, %77
+  %78 = getelemptr @d2, 2
+  %79 = getelemptr %78, 0
+  store 4, %79
+  %80 = getelemptr @d2, 2
+  %81 = getelemptr %80, 1
+  store 5, %81
+  %82 = getelemptr @d2, 3
+  %83 = getelemptr %82, 0
+  store 6, %83
+  %84 = getelemptr @d2, 3
+  %85 = getelemptr %84, 1
+  store 7, %85
+  %86 = getelemptr @a1, 1
+  %87 = getelemptr %86, 0
+  %88 = getelemptr %87, 3
+  %89 = load %88
+  ret %89
 }
+
