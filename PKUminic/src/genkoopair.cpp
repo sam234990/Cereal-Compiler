@@ -46,23 +46,43 @@ void CompUnitAST::init_koopair(string &inputstr, symbol::astinfo &astinfo) const
     // 1. 将函数定义加入到koopair的最前端
     inputstr.append("decl @getint(): i32\n");
     inputstr.append("decl @getch(): i32\n");
-    inputstr.append("decl @getarray(*i32): i32\n");
+    inputstr.append("decl @starttime()\n");
+    inputstr.append("decl @stoptime()\n");
+
     inputstr.append("decl @putint(i32)\n");
     inputstr.append("decl @putch(i32)\n");
-    inputstr.append("decl @putarray(i32, *i32)\n");
-    inputstr.append("decl @starttime()\n");
-    inputstr.append("decl @stoptime()\n\n");
+    
+    inputstr.append("decl @getarray(*i32): i32\n");
+    inputstr.append("decl @putarray(i32, *i32)\n\n");
 
     // 2. 把系统库中的函数添加到函数表中
     symbol::gFuncTable.insert({"getint", {"int"}});
     symbol::gFuncTable.insert({"getch", {"int"}});
-    symbol::gFuncTable.insert({"getarray", {"int"}});
-    symbol::gFuncTable.insert({"putint", {"void"}});
-    symbol::gFuncTable.insert({"putch", {"void"}});
-    symbol::gFuncTable.insert({"putarray", {"void"}});
-    symbol::gFuncTable.insert({"putf", {"void"}});
     symbol::gFuncTable.insert({"starttime", {"void"}});
     symbol::gFuncTable.insert({"stoptime", {"void"}});
+
+    auto temp_func_0 = new symbol::FuncTableItem("void");
+    vector<int> temp;
+    temp.push_back(0);
+    temp_func_0->shape_list_.push_back(temp);
+    symbol::gFuncTable.insert({"putint", *temp_func_0});
+    symbol::gFuncTable.insert({"putch", *temp_func_0});
+
+    auto temp_func_1 = new symbol::FuncTableItem("int");
+    vector<int> temp_1;
+    temp_1.push_back(-1); //表第一维指针的
+    temp_func_1->shape_list_.push_back(temp_1);
+    symbol::gFuncTable.insert({"getarray", *temp_func_1});
+
+    auto temp_func_2 = new symbol::FuncTableItem("void");
+    vector<int> temp_2, temp_3;
+    temp_2.push_back(0);  //表数值
+    temp_3.push_back(-1); //表第一维指针的
+    temp_func_2->shape_list_.push_back(temp_2);
+    temp_func_2->shape_list_.push_back(temp_3);
+    symbol::gFuncTable.insert({"putarray", *temp_func_2});
+
+    symbol::gFuncTable.insert({"putf", {"void"}});
 }
 
 // ==================== FuncDefAST  Class ====================
@@ -89,6 +109,7 @@ void FuncDefAST::Dump(string &inputstr, symbol::astinfo &astinfo) const
     }
 
     inputstr = inputstr + "fun @" + this->ident + "(";
+    astinfo.func_name = this->ident;
     //有形参表,没有则直接跳过
     if (this->funcfparamlist != NULL)
     {
@@ -168,9 +189,53 @@ void FuncFParamsListAST::FuncFParamLISTAlloc(string &inputstr, symbol::astinfo &
     return;
 }
 
-// ==================== FuncFParamAST  Class ====================
-void FuncFParamAST::Dump(string &inputstr, symbol::astinfo &astinfo) const
+// ==================== FuncFParamOneAST  Class ====================
+void FuncFParamOneAST::Dump(string &inputstr, symbol::astinfo &astinfo) const
 {
+    // 1. 语义分析
+    //加入名称并判断
+    auto &symbol_table = symbol::Scope_1[astinfo.ast_scope_id].symboltable;
+    const auto &var_iter = symbol_table.find(this->ident_name);
+    if (var_iter == symbol_table.end())
+    { //如果为空,则添加到符号表中
+        auto temp = new symbol::SymbolItem(false, false);
+        symbol_table.insert({this->ident_name, *temp}); // 对于constdefone赋值直接添加到符号表中.
+    }
+    else
+    { //重名报错
+        symbol::SemanticError(line_num, "Function paramater : " + this->ident_name + "define repetition");
+    }
+
+    vector<int> paramsize;
+    paramsize.push_back(0);
+    auto &functableitem = symbol::gFuncTable[astinfo.func_name]; // 形参所在函数的函数表项
+    functableitem.shape_list_.push_back(paramsize);
+
+    //形参的在koopa ir中的变量名进行alloc时保存的变量名
+    auto &item = symbol::Scope_1[astinfo.ast_scope_id].symboltable[this->ident_name];
+    symbol::koopa_ir_name(this->ident_name, item);
+    item.is_funcFparam = true; //是函数形参
+
+    // 在koopa ir中的函数声明中使用 %和名称来命名
+    // 以此来区分alloc分配的kir变量名和形参中的变量。
+    inputstr.append('%' + this->ident_name + " : i32");
+    return;
+}
+
+void FuncFParamOneAST::FuncFParamAlloc(string &inputstr, symbol::astinfo &astinfo) const
+{
+    auto &item = symbol::Scope_1[astinfo.ast_scope_id].symboltable[this->ident_name];
+    string temp = item.koopa_ir_name;
+    inputstr.append("  " + temp + " = alloc i32\n");
+    //在koopa ir中的函数声明中使用 %和名称来命名
+    inputstr.append("  store %" + this->ident_name + ", " + temp + '\n');
+    return;
+}
+
+// ==================== FuncFParamArrayAST  Class ====================
+void FuncFParamArrayAST::Dump(std::string &inputstr, symbol::astinfo &astinfo) const
+{
+    // cout << "in FuncFParamArrayAST Dump() " << endl;
     // 1. 语义分析
     //加入名称并判断
     auto &symbol_table = symbol::Scope_1[astinfo.ast_scope_id].symboltable;
@@ -187,22 +252,69 @@ void FuncFParamAST::Dump(string &inputstr, symbol::astinfo &astinfo) const
 
     //形参的在koopa ir中的变量名进行alloc时保存的变量名
     auto &item = symbol::Scope_1[astinfo.ast_scope_id].symboltable[this->ident_name];
+    item.dimension_len = this->shape_list.size();
+    item.is_funcFparam = true; //是函数形参
+    item.is_array = true;
     symbol::koopa_ir_name(this->ident_name, item);
 
-    // 在koopa ir中的函数声明中使用 %和名称来命名
-    // 以此来区分alloc分配的kir变量名和形参中的变量。
-    inputstr.append('%' + this->ident_name + " : i32");
+    string arrayfparamtype = "*";
+    string temp = "i32";
+
+    vector<int> paramsize;
+    paramsize.push_back(-1); //表第一维指针的
+
+    if (this->shape_list.empty())
+    { //如果当前 Exp列表为空
+        item.dimension_len = 0;
+    }
+    else
+    {
+        //循环获得数组各维的维度 除第一维以外
+        item.dimension_len = this->shape_list.size();
+        for (int i = 0; i < this->shape_list.size(); i++)
+        {
+            arrayfparamtype.append("[");
+            int num = this->shape_list[i]->cal(astinfo);
+            item.dimension_size.push_back(num); //将数组位数加入符号表中
+            paramsize.push_back(num);
+            temp.append(", " + to_string(num) + "]");
+        }
+    }
+
+    arrayfparamtype.append(temp);
+    // 在 ir 中的 函数声明中 使用  %名称
+    // 以此来区分alloc分配的koopair变量名和形参中的变量。
+    inputstr.append('%' + this->ident_name + " : " + arrayfparamtype);
+
+    auto &functableitem = symbol::gFuncTable[astinfo.func_name]; // 形参所在函数的函数表项
+    functableitem.shape_list_.push_back(paramsize);
+
     return;
 }
 
-void FuncFParamAST::FuncFParamAlloc(string &inputstr, symbol::astinfo &astinfo)
+void FuncFParamArrayAST::FuncFParamAlloc(std::string &inputstr, symbol::astinfo &astinfo) const
 {
+    // TODO FINISH
+    //为当前 数组形参 在当前函数中分配空间
+    // cout << "in FuncFParamArrayAST FuncFParamAlloc() " << endl;
+    string arrayfparamtype = "*";
+    string temp = "i32";
+    if (!this->shape_list.empty())
+    {
+        for (int i = 0; i < this->shape_list.size(); i++)
+        {
+            arrayfparamtype.append("[");
+            int num = this->shape_list[i]->cal(astinfo);
+            temp.append(", " + to_string(num) + "]");
+        }
+    }
+    arrayfparamtype.append(temp);
+
     auto &item = symbol::Scope_1[astinfo.ast_scope_id].symboltable[this->ident_name];
-    string temp = item.koopa_ir_name;
-    inputstr.append("  " + temp + " = alloc i32\n");
+    string item_name = item.koopa_ir_name;
+    inputstr.append("  " + item_name + " = alloc " + arrayfparamtype + "\n");
     //在koopa ir中的函数声明中使用 %和名称来命名
-    inputstr.append("  store %" + this->ident_name + ", " + temp + '\n');
-    return;
+    inputstr.append("  store %" + this->ident_name + ", " + item_name + '\n');
 }
 
 // ==================== BlockAST  Class ====================
@@ -227,7 +339,7 @@ void BlockItemAST::Dump(string &inputstr, symbol::astinfo &astinfo) const
 
     astinfo.ast_scope_id = scope_id; //修改当前ast scope为新建的id
     symbol::Scope_1.push_back(*bscope);
-    cout << "当前作用域id" << astinfo.ast_scope_id << endl;
+    // cout << "当前作用域id" << astinfo.ast_scope_id << endl;
     // 2. 遍历当前作用域下所有的指令
     if (blockitemlist.size() == 0)
     { //如果里面为空直接返回
@@ -617,7 +729,6 @@ void DefArray::Dump(string &inputstr, symbol::astinfo &astinfo) const
 // ==================== DefArrayInitAST  Class ====================
 void DefArrayInitAST::Dump(string &inputstr, symbol::astinfo &astinfo) const
 {
-    // TODO 声明并赋值
 
     // 1. 语义分析
     //加入名称并判断
@@ -650,7 +761,8 @@ void DefArrayInitAST::Dump(string &inputstr, symbol::astinfo &astinfo) const
         this->initvalarray->cal(astinfo, item);
 
         // b. 根据 item.dimension_size 递归写入 inputstr 中
-        this->initvalarray->aggreate(inputstr, astinfo, item);
+        astinfo.array_offset = 0;
+        this->initvalarray->aggreate(inputstr, astinfo, item, 0);
         inputstr.append("\n");
     }
     else
@@ -680,102 +792,50 @@ void DefArrayInitAST::Dump(string &inputstr, symbol::astinfo &astinfo) const
 }
 
 // ==================== InitValArrayAST  Class ====================
-void InitValArrayAST::aggreate(string &inputstr, symbol::astinfo &astinfo, symbol::SymbolItem &item)
-{ //全局情况下通过递归调用 aggreate 将rusult的结果写入 aggregate 中， 全局变量中所有表达式必为常量
-
-    // 1. 通过括号和offset计算当前括号下 完整数组元素格式
-    int supply_size;                                           //当前括号下完整元素个数 作为当前补充完整的结束offset
-    int brace_size = astinfo.dim_total_num[astinfo.brace_num]; //通过 括号个数 brace_num 判断的元素格式
-    if (astinfo.array_offset == 0)
-    { //如果当前 offset 为0，使用括号判断结果
-        supply_size = brace_size;
-    }
-    else
-    { //通过offset判断
-        int offset_size = 0;
-        for (int s = 0; s < astinfo.dim_total_num.size(); s++)
+void InitValArrayAST::aggreate(string &inputstr, symbol::astinfo &astinfo, symbol::SymbolItem &item, int deep)
+{ //全局情况下通过递归调用 aggreate 将 rusult的结果写入 inpustr 中， 全局变量中所有表达式必为常量
+    int size = item.dimension_size[deep];
+    cout << deep << " " << item.dimension_len << " " << size << endl;
+    if (deep == (item.dimension_len - 1))
+    { //到达最深层，赋值
+        //如果全是0 尝试用zerinit初始化
+        bool flag = true;
+        for (int i = astinfo.array_offset; i < astinfo.array_offset + size; i++)
         {
-            if ((astinfo.array_offset % astinfo.dim_total_num[s]) == 0)
-            { // 在 dim_total_num 中从大到小分别取余计算
-                offset_size = astinfo.dim_total_num[s];
-                break;
-            }
+            if (item.result[i] != 0)
+                flag = false;
         }
-        supply_size = (offset_size < brace_size) ? offset_size : brace_size;
-        supply_size = astinfo.array_offset + supply_size; //作为当前补充完整的结束offset
-    }
+        if (flag)
+        { //如果全是0
+            astinfo.array_offset = astinfo.array_offset + size;
+            inputstr.append("zeroinit");
+            return;
+        }
 
-    // 2. 遍历自身列表
-    if (this->initvalarraylist.size() == 0)
-    { //如果当前长度为0，使用zero赋初值并返回
-        inputstr.append("zeroinit");
-        astinfo.array_offset = supply_size;
-        return;
-    }
-    else
-    { //如果当前长度不为0
         inputstr.append("{");
-        int i = 0;
-        // 过多的数据未加括号 TODO
-        for (i = 0; i < this->initvalarraylist.size(); i++)
+        for (int i = 0; i < size; i++)
         {
-            auto tempinitval = this->initvalarraylist[i];
-            // 2.1 该项为表达式
-            if (tempinitval->is_exp)
-            {
-                astinfo.array_offset++;                       //数组偏移量+1
-                int res = tempinitval->initval->cal(astinfo); //计算结果
-                string t = to_string(res);
-                inputstr.append(t);
-                if (astinfo.array_offset != supply_size)
-                { //如果不是最后一个
-                    inputstr.append(", ");
-                }
-
-                if (item.is_const)
-                { //如果是const项
-                    item.result.push_back(res);
-                }
-            }
-            else
-            { // 2.2 该项为一个 大括号 项
-                // 2.2.1. 通过offset 判断前面的表达式项是否足够填满一个数组
-                bool temp_flag = false;
-                for (int s = 0; s < astinfo.dim_total_num.size(); s++)
-                {
-                    if ((astinfo.array_offset % astinfo.dim_total_num[s]) == 0)
-                    { // 在 dim_total_num 中从大到小分别取余计算
-                        temp_flag = true;
-                    }
-                }
-                if (!temp_flag)
-                { //如果没填满， 则报错
-                    symbol::SemanticError(this->line_num, "Current array initialization error");
-                }
-                astinfo.brace_num++;                            // 大括号计数
-                tempinitval->aggreate(inputstr, astinfo, item); //递归调用自身
-                astinfo.brace_num--;                            // 大括号计数恢复
+            inputstr.append(to_string(item.result[astinfo.array_offset++])); //添加数字
+            if (i != (size - 1))
+            { //非最后添加 “，”
                 inputstr.append(", ");
             }
         }
-        // 不足部分补0
-        for (; astinfo.array_offset < supply_size; astinfo.array_offset++)
-        { //剩余未声明部分补0
-            item.result.push_back(0);
-            inputstr.append("0");
-            if (astinfo.array_offset != (supply_size - 1))
-            { //如果不是最后一个
-                inputstr.append(", ");
-            }
-        }
-
-        if (astinfo.array_offset > astinfo.dim_total_num[0])
-        { //如果当前offset 比 整个数组空间还大报错
-            symbol::SemanticError(this->line_num, "Current array initialization error");
-        }
-        cout << supply_size << endl;
         inputstr.append("}");
-        return;
+    }
+    else
+    { //未到达最深层
+        inputstr.append("{");
+        for (int i = 0; i < size; i++)
+        {
+            //循环遍历自身
+            this->aggreate(inputstr, astinfo, item, deep + 1);
+            if (i != (size - 1))
+            { //非最后添加 “，”
+                inputstr.append(", ");
+            }
+        }
+        inputstr.append("}");
     }
 }
 
@@ -806,7 +866,7 @@ void InitValArrayAST::cal(symbol::astinfo &astinfo, symbol::SymbolItem &item)
     // 2. 遍历自身列表
 
     int i = 0;
-    // 过多的数据未加括号 TODO
+    // 过多的数据未加括号
     for (i = 0; i < this->initvalarraylist.size(); i++)
     {
         auto tempinitval = this->initvalarraylist[i];
@@ -921,23 +981,26 @@ void InitValArrayAST::init_store(string &inputstr, symbol::astinfo &astinfo, sym
         }
     }
 
-    if (item.is_const)
-    { // const 部分补0
-        for (; astinfo.array_offset < supply_size; astinfo.array_offset++)
-        { //剩余未声明部分补0
-            item.result.push_back(0);
-            t = to_string(0);
-            this->assign_arrayval(inputstr, astinfo, item, t); //赋值
+    for (; astinfo.array_offset < supply_size; astinfo.array_offset++)
+    { // 为了过测试用例，无论const与否 剩余未声明部分补0
+        item.result.push_back(0);
+        t = to_string(0);
+        this->assign_arrayval(inputstr, astinfo, item, t); //赋值
+    }
 
-            // string arrayindex = "%" + to_string(astinfo.symbolnum++);
-            // inputstr.append("  " + arrayindex + " = getelemptr " + item.koopa_ir_name + ", " + to_string(astinfo.array_offset - 1) + "\n");
-            // inputstr.append("  store " + t + ", " + arrayindex + "\n"); // 使用 store 将 t 存入 arrayindex 中
-        }
-    }
-    else
-    { //非const部分剩余数组加满
-        astinfo.array_offset = supply_size;
-    }
+    // if (item.is_const) // testcast中所有均需要补0，如测试8，使用上面注释的函数
+    // {                  // const 部分补0
+    //     for (; astinfo.array_offset < supply_size; astinfo.array_offset++)
+    //     { //剩余未声明部分补0
+    //         item.result.push_back(0);
+    //         t = to_string(0);
+    //         this->assign_arrayval(inputstr, astinfo, item, t); //赋值
+    //     }
+    // }
+    // else
+    // { //非const部分剩余数组加满
+    //     astinfo.array_offset = supply_size;
+    // }
 
     if (astinfo.array_offset > astinfo.dim_total_num[0])
     { //如果当前offset 比 整个数组空间还大报错
@@ -1014,7 +1077,7 @@ void IdentArrayAST::arrayalloc(string &inputstr, symbol::astinfo &astinfo)
         }
 
         // 将数组每一维的深度信息加入符号表中
-        item.dimension_size.push_back(temp);
+        item.dimension_size.insert(item.dimension_size.begin(), temp);
     }
 
     return;

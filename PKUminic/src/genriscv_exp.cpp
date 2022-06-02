@@ -145,7 +145,7 @@ void Visit_bin_cond(const koopa_raw_value_t &value, ostream &outfile, symbol::ki
 
 void Visit_bin_double_reg(const koopa_raw_value_t &value, ostream &outfile, symbol::kirinfo &kirinfo)
 {
-    cout << " 二者均为寄存器的指令" << endl;
+    // cout << " 二者均为寄存器的指令" << endl;
     const auto &binary = value->kind.data.binary;
     string bin_op; //当前指令的运算符
     switch (binary.op)

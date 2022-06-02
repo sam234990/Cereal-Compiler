@@ -192,7 +192,13 @@ CondExpAST::CondExpAST(unique_ptr<ExpAST> l, int oper, unique_ptr<ExpAST> r,
 }
 
 // ==================== FuncFParamAST  Class ====================
-FuncFParamAST::FuncFParamAST(string ident_name, int line_num) : BaseAST(line_num)
+FuncFParamOneAST::FuncFParamOneAST(string ident_name, int line_num) : FuncFParamAST(line_num)
+{
+    this->ident_name = ident_name;
+}
+
+// ==================== FuncFParamArrayAST  Class ====================
+FuncFParamArrayAST::FuncFParamArrayAST(string ident_name, int line_num) : FuncFParamAST(line_num)
 {
     this->ident_name = ident_name;
 }

@@ -33,6 +33,7 @@ void Visit_call(const koopa_raw_value_t &value, std::ostream &outfile, symbol::k
 void Visit_global_alloc(const koopa_raw_value_t &value, std::ostream &outfile, symbol::kirinfo &kirinfo);
 void visit_aggregate(const koopa_raw_value_t &aggregate, std::ostream &outfile, symbol::kirinfo &kirinfo);
 void visit_getelemptr(const koopa_raw_value_t &getelemptr, std::ostream &outfile, symbol::kirinfo &kirinfo);
+void visit_getptr(const koopa_raw_value_t &getptr, std::ostream &outfile, symbol::kirinfo &kirinfo);
 
 
 

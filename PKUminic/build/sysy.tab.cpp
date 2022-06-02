@@ -180,6 +180,8 @@ union YYSTYPE
     FuncTypeAST *ast_functype;
     FuncFParamsListAST *ast_funcFlist;
     FuncFParamAST *ast_funcF;
+    FuncFParamOneAST *ast_funcFone;
+    FuncFParamArrayAST *ast_funcFarray;
     ExpAST *ast_exp;
     FuncRParamsListAST *ast_funcRlist;
     FuncCallAST *ast_funcR;
@@ -193,7 +195,7 @@ union YYSTYPE
     InitValArrayAST *initvalarray;
     std::vector<InitValArrayAST *> *initcalarraylist;
 
-#line 197 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 199 "/root/compiler/PKUminic/build/sysy.tab.cpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -512,16 +514,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  13
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   206
+#define YYLAST   212
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  37
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  48
+#define YYNNTS  49
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  102
+#define YYNRULES  105
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  169
+#define YYNSTATES  175
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   282
@@ -571,17 +573,17 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    86,    86,    91,    95,    99,   103,   110,   114,   120,
-     127,   135,   138,   139,   143,   148,   153,   157,   163,   166,
-     175,   179,   183,   187,   194,   199,   206,   212,   215,   220,
-     223,   228,   231,   237,   245,   253,   262,   274,   279,   285,
-     289,   294,   297,   303,   308,   315,   318,   322,   323,   324,
-     325,   326,   329,   332,   335,   338,   343,   348,   355,   360,
-     363,   368,   373,   378,   381,   386,   389,   392,   398,   403,
-     407,   411,   416,   419,   424,   428,   434,   437,   442,   445,
-     450,   454,   459,   462,   467,   470,   475,   478,   483,   488,
-     489,   492,   493,   494,   495,   498,   499,   500,   503,   504,
-     507,   508,   509
+       0,    90,    90,    95,    99,   103,   107,   114,   118,   124,
+     131,   139,   142,   143,   147,   152,   157,   161,   167,   170,
+     179,   183,   187,   191,   198,   203,   210,   216,   219,   224,
+     227,   232,   235,   241,   249,   257,   266,   278,   283,   289,
+     292,   299,   304,   307,   314,   317,   323,   328,   335,   338,
+     342,   343,   344,   345,   346,   349,   352,   355,   358,   363,
+     368,   375,   380,   383,   388,   393,   398,   401,   406,   409,
+     412,   418,   423,   427,   431,   436,   439,   444,   448,   454,
+     457,   462,   465,   470,   474,   479,   482,   487,   490,   495,
+     498,   503,   508,   509,   512,   513,   514,   515,   518,   519,
+     520,   523,   524,   527,   528,   529
 };
 #endif
 
@@ -597,12 +599,12 @@ static const char *const yytname[] =
   "')'", "$accept", "Root", "CompUnit", "Decl", "ConstDecl", "BType",
   "ConstDef", "ConstDefOne", "ConstDefArray", "IdentArray", "InitValArray",
   "InitValArrayList", "InitVal", "VarDecl", "Def", "DefOne", "DefArray",
-  "FuncDef", "FuncFParamsList", "FuncFParam", "FuncFParamOne", "Block",
-  "BlockItemList", "BlockItem", "Stmt", "ReturnStmt", "AssignStmt",
-  "IfStmt", "WhileStmt", "Exp", "LVal", "PrimaryExp", "Ident", "UnaryExp",
-  "FuncCall", "FuncRParamsList", "MultExp", "AddExp", "RelExp", "EqExp",
-  "LAndExp", "LOrExp", "Number", "EqualOp", "RelOp", "UnaryOp", "AddOp",
-  "MultOp", YY_NULLPTR
+  "FuncDef", "FuncFParamsList", "FuncFParam", "FuncFParamOne",
+  "FuncFParamArray", "Block", "BlockItemList", "BlockItem", "Stmt",
+  "ReturnStmt", "AssignStmt", "IfStmt", "WhileStmt", "Exp", "LVal",
+  "PrimaryExp", "Ident", "UnaryExp", "FuncCall", "FuncRParamsList",
+  "MultExp", "AddExp", "RelExp", "EqExp", "LAndExp", "LOrExp", "Number",
+  "EqualOp", "RelOp", "UnaryOp", "AddOp", "MultOp", YY_NULLPTR
 };
 #endif
 
@@ -618,7 +620,7 @@ static const yytype_int16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF (-105)
+#define YYPACT_NINF (-132)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -632,23 +634,24 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      87,  -105,    14,     0,    42,    87,  -105,    90,    19,    94,
-    -105,    13,    31,  -105,  -105,  -105,  -105,    31,     6,   125,
-    -105,  -105,  -105,  -105,    50,    -4,   147,  -105,  -105,  -105,
-     150,  -105,   164,   164,    -2,    56,   164,   155,  -105,    60,
-      73,    -9,  -105,  -105,   164,    56,  -105,  -105,  -105,    34,
-    -105,   164,    70,  -105,  -105,  -105,  -105,  -105,  -105,  -105,
-      88,   184,    76,   179,    91,    92,  -105,   164,    78,    60,
-      -8,    57,  -105,    80,    47,  -105,  -105,     0,    60,  -105,
-    -105,    20,    89,  -105,  -105,  -105,   164,  -105,  -105,   164,
-    -105,  -105,  -105,  -105,   164,  -105,  -105,   164,   164,   164,
-    -105,  -105,  -105,    60,  -105,  -105,    -3,  -105,  -105,   123,
-      95,    99,   116,   120,  -105,  -105,  -105,    50,  -105,   112,
-    -105,  -105,  -105,  -105,  -105,  -105,   132,   140,  -105,  -105,
-    -105,  -105,    -7,  -105,  -105,    88,   184,    76,   179,    91,
-    -105,   149,  -105,  -105,   144,   164,   164,  -105,  -105,  -105,
-    -105,  -105,   164,   164,  -105,  -105,  -105,  -105,   143,   153,
-     146,  -105,   138,   138,  -105,   161,  -105,   138,  -105
+      84,  -132,    13,     8,    49,    84,  -132,    92,    33,    97,
+    -132,    17,    36,  -132,  -132,  -132,  -132,    36,    26,    16,
+    -132,  -132,  -132,  -132,    44,    -2,   117,  -132,  -132,  -132,
+     148,  -132,   163,   163,    -1,    22,   163,   156,  -132,    42,
+      57,   -18,  -132,  -132,    69,   163,    22,  -132,  -132,  -132,
+      -4,  -132,   163,    75,  -132,  -132,  -132,  -132,  -132,  -132,
+    -132,   103,    89,    62,   167,   107,   113,  -132,   163,   101,
+      42,   -10,    64,  -132,   125,    61,  -132,   112,     8,    42,
+     163,  -132,  -132,    18,   123,  -132,  -132,  -132,   163,  -132,
+    -132,   163,  -132,  -132,  -132,  -132,   163,  -132,  -132,   163,
+     163,   163,  -132,  -132,  -132,    42,  -132,  -132,    29,  -132,
+    -132,   147,   114,   134,   143,   160,  -132,  -132,  -132,    44,
+    -132,   111,  -132,  -132,  -132,  -132,  -132,  -132,   164,   154,
+     159,  -132,  -132,   161,  -132,  -132,     7,  -132,  -132,   103,
+      89,    62,   167,   107,  -132,   150,  -132,  -132,   166,   163,
+     163,  -132,  -132,  -132,  -132,  -132,   163,  -132,  -132,   163,
+    -132,  -132,  -132,  -132,   165,   168,   169,  -132,   137,   137,
+    -132,   173,  -132,   137,  -132
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -660,39 +663,40 @@ static const yytype_int8 yydefact[] =
        5,     0,     0,     1,     4,     6,     7,     0,    30,    32,
       25,    27,    28,     8,     0,     0,     0,     9,    12,    13,
        0,    10,     0,     0,     0,     0,     0,    30,    26,     0,
-       0,     0,    37,    39,     0,     0,    95,    96,    97,    68,
-      88,     0,    64,    29,    24,    66,    69,    63,    76,    71,
-      78,    80,    82,    84,    86,    62,    67,     0,     0,     0,
-       0,     0,    31,     0,     0,    35,    40,     0,     0,    14,
-      15,     0,     0,   100,   101,   102,     0,    98,    99,     0,
-      93,    94,    91,    92,     0,    89,    90,     0,     0,     0,
-      70,    16,    33,     0,    18,    22,     0,    20,    17,     0,
-       0,     0,     0,     0,    55,    42,    45,     0,    51,     0,
-      43,    46,    47,    48,    49,    50,     0,    66,    38,    36,
-      73,    74,     0,    65,    77,    79,    81,    83,    85,    87,
-      34,     0,    19,    57,     0,     0,     0,    53,    54,    41,
-      44,    52,     0,     0,    72,    23,    21,    56,     0,     0,
-       0,    75,     0,     0,    58,    59,    61,     0,    60
+       0,     0,    37,    39,    40,     0,     0,    98,    99,   100,
+      71,    91,     0,    67,    29,    24,    69,    72,    66,    79,
+      74,    81,    83,    85,    87,    89,    65,    70,     0,     0,
+       0,     0,     0,    31,     0,     0,    35,    41,     0,     0,
+       0,    14,    15,     0,     0,   103,   104,   105,     0,   101,
+     102,     0,    96,    97,    94,    95,     0,    92,    93,     0,
+       0,     0,    73,    16,    33,     0,    18,    22,     0,    20,
+      17,     0,     0,     0,     0,     0,    58,    45,    48,     0,
+      54,     0,    46,    49,    50,    51,    52,    53,     0,    69,
+       0,    38,    36,     0,    76,    77,     0,    68,    80,    82,
+      84,    86,    88,    90,    34,     0,    19,    60,     0,     0,
+       0,    56,    57,    44,    47,    55,     0,    42,    43,     0,
+      75,    23,    21,    59,     0,     0,     0,    78,     0,     0,
+      61,    62,    64,     0,    63
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -105,  -105,  -105,    38,  -105,     5,   177,  -105,  -105,    -6,
-     -38,  -105,   -41,  -105,   171,  -105,  -105,   191,   163,   121,
-    -105,   -25,  -105,    81,  -104,  -105,  -105,  -105,  -105,   -32,
-     -65,  -105,  -105,   -51,  -105,  -105,   113,   107,   106,   108,
-     105,  -105,  -105,  -105,  -105,  -105,  -105,  -105
+    -132,  -132,  -132,    28,  -132,     2,   179,  -132,  -132,     0,
+     -40,  -132,   -42,  -132,   175,  -132,  -132,   195,   171,   124,
+    -132,  -132,   -29,  -132,    82,  -131,  -132,  -132,  -132,  -132,
+     -32,   -61,  -132,  -132,   -59,  -132,  -132,   115,   116,   108,
+     109,   110,  -132,  -132,  -132,  -132,  -132,  -132,  -132
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int16 yydefgoto[] =
 {
-      -1,     4,     5,   116,     7,    40,    27,    28,    29,    52,
-      72,   106,    53,     9,    20,    21,    22,    10,    41,    42,
-      43,   118,   119,   120,   121,   122,   123,   124,   125,   126,
-      55,    56,    57,    58,    59,   132,    60,    61,    62,    63,
-      64,    65,    66,    97,    94,    67,    89,    86
+      -1,     4,     5,   118,     7,    40,    27,    28,    29,    53,
+      73,   108,    54,     9,    20,    21,    22,    10,    41,    42,
+      43,    44,   120,   121,   122,   123,   124,   125,   126,   127,
+     128,    56,    57,    58,    59,    60,   136,    61,    62,    63,
+      64,    65,    66,    67,    99,    96,    68,    91,    88
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -700,52 +704,54 @@ static const yytype_int16 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      54,    68,    19,    79,    73,     8,    30,    80,    12,   127,
-       8,    30,    54,     1,    75,     1,   100,     1,    19,    82,
-      77,    77,   153,    46,    47,    48,   141,    78,   103,   154,
-     107,   142,    39,   105,    69,   134,    32,    33,     6,    54,
-      11,    34,    13,    14,   102,    18,    49,    50,    25,   131,
-      46,    47,    48,   129,   127,    51,   130,    26,   165,   166,
-      46,    47,    48,   168,     1,    33,   109,     3,   110,    81,
-     111,   112,   113,    49,    50,   114,    37,   144,   140,   117,
-      74,   115,    51,    49,    50,    90,    91,    92,    93,    71,
-      71,   104,    51,    74,    83,    84,    85,   127,   127,    76,
-     156,    36,   127,   155,     1,     2,    98,     3,    99,    54,
-     101,    19,   108,   158,   159,    46,    47,    48,    16,    17,
-     160,   161,    23,    24,   117,   133,    46,    47,    48,     1,
-     145,   109,     3,   110,   146,   111,   112,   113,    49,    50,
-     114,    46,    47,    48,   147,    74,   149,    51,   148,    49,
-      50,   143,    46,    47,    48,    35,    36,   109,    51,   110,
-     151,   111,   112,   113,    49,    50,   114,    46,    47,    48,
-     152,    74,   157,    51,   164,    49,    50,    44,    33,   162,
-      45,    36,    71,   167,    51,    32,    33,    87,    88,   163,
-      49,    50,    95,    96,    31,    38,    15,    70,   128,    51,
-     150,   136,   135,   137,   139,     0,   138
+      55,    69,     8,    81,    74,    12,    82,     8,    19,   102,
+      76,    78,    30,    55,   129,     1,     1,    30,    79,    78,
+      84,    47,    48,    49,    19,     1,   105,    33,     6,   138,
+     109,    83,   107,    14,    39,    70,   159,   171,   172,    11,
+      55,   104,   174,   160,    50,    51,    35,    36,   133,    13,
+     132,   135,    25,    52,   134,    72,    32,    33,   145,    18,
+     129,    34,    26,   146,    47,    48,    49,    47,    48,    49,
+      37,    92,    93,    94,    95,    75,   144,   119,     1,   148,
+     111,     3,   112,    77,   113,   114,   115,    50,    51,   116,
+      50,    51,    89,    90,    75,   117,    52,    72,   106,    52,
+      80,     1,     2,   162,     3,   161,    36,   129,   129,    85,
+      86,    87,   129,    55,    47,    48,    49,   164,   165,    19,
+      16,    17,   100,   119,   166,    23,    24,   167,     1,   101,
+     111,     3,   112,   103,   113,   114,   115,    50,    51,   116,
+      47,    48,    49,   130,    75,   153,    52,    45,    33,   149,
+      47,    48,    49,    47,    48,    49,   111,   110,   112,   137,
+     113,   114,   115,    50,    51,   116,    47,    48,    49,   150,
+      75,   151,    52,    50,    51,   147,    50,    51,    46,    36,
+      97,    98,    52,    72,   156,    52,    32,    33,   152,    50,
+      51,   157,   155,   158,   163,   173,    31,   170,    52,    38,
+      15,   168,   131,   154,   169,    71,   139,   141,     0,   142,
+       0,   143,   140
 };
 
 static const yytype_int16 yycheck[] =
 {
-      32,    33,     8,    44,    36,     0,    12,    45,     3,    74,
-       5,    17,    44,    17,    39,    17,    67,    17,    24,    51,
-      29,    29,    29,     3,     4,     5,    29,    36,    36,    36,
-      71,    34,    36,    71,    36,    86,    30,    31,     0,    71,
-      26,    35,     0,     5,    69,    26,    26,    27,    35,    81,
-       3,     4,     5,    78,   119,    35,    36,    26,   162,   163,
-       3,     4,     5,   167,    17,    31,    19,    20,    21,    35,
-      23,    24,    25,    26,    27,    28,    26,   109,   103,    74,
-      33,    34,    35,    26,    27,     9,    10,    11,    12,    33,
-      33,    34,    35,    33,     6,     7,     8,   162,   163,    26,
-     141,    31,   167,   141,    17,    18,    15,    20,    16,   141,
-      32,   117,    32,   145,   146,     3,     4,     5,    28,    29,
-     152,   153,    28,    29,   119,    36,     3,     4,     5,    17,
-      35,    19,    20,    21,    35,    23,    24,    25,    26,    27,
-      28,     3,     4,     5,    28,    33,    34,    35,    28,    26,
-      27,    28,     3,     4,     5,    30,    31,    19,    35,    21,
-      28,    23,    24,    25,    26,    27,    28,     3,     4,     5,
-      30,    33,    28,    35,    28,    26,    27,    30,    31,    36,
-      30,    31,    33,    22,    35,    30,    31,     3,     4,    36,
-      26,    27,    13,    14,    17,    24,     5,    34,    77,    35,
-     119,    94,    89,    97,    99,    -1,    98
+      32,    33,     0,    45,    36,     3,    46,     5,     8,    68,
+      39,    29,    12,    45,    75,    17,    17,    17,    36,    29,
+      52,     3,     4,     5,    24,    17,    36,    31,     0,    88,
+      72,    35,    72,     5,    36,    36,    29,   168,   169,    26,
+      72,    70,   173,    36,    26,    27,    30,    31,    80,     0,
+      79,    83,    35,    35,    36,    33,    30,    31,    29,    26,
+     121,    35,    26,    34,     3,     4,     5,     3,     4,     5,
+      26,     9,    10,    11,    12,    33,   105,    75,    17,   111,
+      19,    20,    21,    26,    23,    24,    25,    26,    27,    28,
+      26,    27,     3,     4,    33,    34,    35,    33,    34,    35,
+      31,    17,    18,   145,    20,   145,    31,   168,   169,     6,
+       7,     8,   173,   145,     3,     4,     5,   149,   150,   119,
+      28,    29,    15,   121,   156,    28,    29,   159,    17,    16,
+      19,    20,    21,    32,    23,    24,    25,    26,    27,    28,
+       3,     4,     5,    31,    33,    34,    35,    30,    31,    35,
+       3,     4,     5,     3,     4,     5,    19,    32,    21,    36,
+      23,    24,    25,    26,    27,    28,     3,     4,     5,    35,
+      33,    28,    35,    26,    27,    28,    26,    27,    30,    31,
+      13,    14,    35,    33,    30,    35,    30,    31,    28,    26,
+      27,    32,    28,    32,    28,    22,    17,    28,    35,    24,
+       5,    36,    78,   121,    36,    34,    91,    99,    -1,   100,
+      -1,   101,    96
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -756,19 +762,20 @@ static const yytype_int8 yystos[] =
       54,    26,    42,     0,    40,    54,    28,    29,    26,    46,
       51,    52,    53,    28,    29,    35,    26,    43,    44,    45,
       46,    43,    30,    31,    35,    30,    31,    26,    51,    36,
-      42,    55,    56,    57,    30,    30,     3,     4,     5,    26,
-      27,    35,    46,    49,    66,    67,    68,    69,    70,    71,
-      73,    74,    75,    76,    77,    78,    79,    82,    66,    36,
-      55,    33,    47,    66,    33,    58,    26,    29,    36,    49,
-      47,    35,    66,     6,     7,     8,    84,     3,     4,    83,
-       9,    10,    11,    12,    81,    13,    14,    80,    15,    16,
-      70,    32,    58,    36,    34,    47,    48,    49,    32,    19,
-      21,    23,    24,    25,    28,    34,    40,    42,    58,    59,
-      60,    61,    62,    63,    64,    65,    66,    67,    56,    58,
-      36,    66,    72,    36,    70,    73,    74,    75,    76,    77,
-      58,    29,    34,    28,    66,    35,    35,    28,    28,    34,
-      60,    28,    30,    29,    36,    47,    49,    28,    66,    66,
-      66,    66,    36,    36,    28,    61,    61,    22,    61
+      42,    55,    56,    57,    58,    30,    30,     3,     4,     5,
+      26,    27,    35,    46,    49,    67,    68,    69,    70,    71,
+      72,    74,    75,    76,    77,    78,    79,    80,    83,    67,
+      36,    55,    33,    47,    67,    33,    59,    26,    29,    36,
+      31,    49,    47,    35,    67,     6,     7,     8,    85,     3,
+       4,    84,     9,    10,    11,    12,    82,    13,    14,    81,
+      15,    16,    71,    32,    59,    36,    34,    47,    48,    49,
+      32,    19,    21,    23,    24,    25,    28,    34,    40,    42,
+      59,    60,    61,    62,    63,    64,    65,    66,    67,    68,
+      31,    56,    59,    67,    36,    67,    73,    36,    71,    74,
+      75,    76,    77,    78,    59,    29,    34,    28,    67,    35,
+      35,    28,    28,    34,    61,    28,    30,    32,    32,    29,
+      36,    47,    49,    28,    67,    67,    67,    67,    36,    36,
+      28,    62,    62,    22,    62
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -778,13 +785,13 @@ static const yytype_int8 yyr1[] =
       41,    42,    43,    43,    44,    45,    46,    46,    47,    47,
       48,    48,    48,    48,    49,    50,    50,    51,    51,    52,
       52,    53,    53,    54,    54,    54,    54,    55,    55,    56,
-      57,    58,    58,    59,    59,    60,    60,    61,    61,    61,
-      61,    61,    61,    61,    61,    61,    62,    62,    63,    64,
-      64,    65,    66,    67,    67,    68,    68,    68,    69,    70,
-      70,    70,    71,    71,    72,    72,    73,    73,    74,    74,
-      75,    75,    76,    76,    77,    77,    78,    78,    79,    80,
-      80,    81,    81,    81,    81,    82,    82,    82,    83,    83,
-      84,    84,    84
+      56,    57,    58,    58,    59,    59,    60,    60,    61,    61,
+      62,    62,    62,    62,    62,    62,    62,    62,    62,    63,
+      63,    64,    65,    65,    66,    67,    68,    68,    69,    69,
+      69,    70,    71,    71,    71,    72,    72,    73,    73,    74,
+      74,    75,    75,    76,    76,    77,    77,    78,    78,    79,
+      79,    80,    81,    81,    82,    82,    82,    82,    83,    83,
+      83,    84,    84,    85,    85,    85
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -794,13 +801,13 @@ static const yytype_int8 yyr2[] =
        3,     1,     1,     1,     3,     3,     4,     4,     2,     3,
        1,     3,     1,     3,     1,     2,     3,     1,     1,     3,
        1,     3,     1,     5,     6,     5,     6,     1,     3,     1,
-       2,     3,     2,     1,     2,     1,     1,     1,     1,     1,
-       1,     1,     2,     2,     2,     1,     3,     2,     4,     5,
-       7,     5,     1,     1,     1,     3,     1,     1,     1,     1,
-       2,     1,     4,     3,     1,     3,     1,     3,     1,     3,
-       1,     3,     1,     3,     1,     3,     1,     3,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1
+       1,     2,     4,     4,     3,     2,     1,     2,     1,     1,
+       1,     1,     1,     1,     1,     2,     2,     2,     1,     3,
+       2,     4,     5,     7,     5,     1,     1,     1,     3,     1,
+       1,     1,     1,     2,     1,     4,     3,     1,     3,     1,
+       3,     1,     3,     1,     3,     1,     3,     1,     3,     1,
+       3,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1,     1,     1,     1
 };
 
 
@@ -1498,263 +1505,263 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 86 "/root/compiler/PKUminic/src/sysy.y"
+#line 90 "/root/compiler/PKUminic/src/sysy.y"
                {
     ast = unique_ptr<CompUnitAST>((yyvsp[0].ast_comp));
 }
-#line 1506 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1513 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 3:
-#line 91 "/root/compiler/PKUminic/src/sysy.y"
+#line 95 "/root/compiler/PKUminic/src/sysy.y"
            {
         (yyval.ast_comp) = new CompUnitAST(yyget_lineno());
         (yyval.ast_comp)->compunitlist.push_back(static_cast<BaseAST*>((yyvsp[0].ast_decl)));
     }
-#line 1515 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1522 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 4:
-#line 95 "/root/compiler/PKUminic/src/sysy.y"
+#line 99 "/root/compiler/PKUminic/src/sysy.y"
                     {
         (yyval.ast_comp) = ((yyvsp[-1].ast_comp));//左递归
         (yyval.ast_comp)->compunitlist.push_back(static_cast<BaseAST*>((yyvsp[0].ast_decl))); //将全局声明放入
     }
-#line 1524 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1531 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 5:
-#line 99 "/root/compiler/PKUminic/src/sysy.y"
+#line 103 "/root/compiler/PKUminic/src/sysy.y"
              { 
         (yyval.ast_comp) = new CompUnitAST(yyget_lineno());
         (yyval.ast_comp)->compunitlist.push_back(static_cast<BaseAST*>((yyvsp[0].ast_val)));
     }
-#line 1533 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1540 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 6:
-#line 103 "/root/compiler/PKUminic/src/sysy.y"
+#line 107 "/root/compiler/PKUminic/src/sysy.y"
                       {
         (yyval.ast_comp) = ((yyvsp[-1].ast_comp));//左递归
         (yyval.ast_comp)->compunitlist.push_back(static_cast<BaseAST*>((yyvsp[0].ast_val))); //将函数块放入
     }
-#line 1542 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1549 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 7:
-#line 110 "/root/compiler/PKUminic/src/sysy.y"
+#line 114 "/root/compiler/PKUminic/src/sysy.y"
                   {//将分号移至上方, 使 constdecl变成左递归。
         (yyval.ast_decl) = ((yyvsp[-1].ast_decl));
     }
-#line 1550 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1557 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 8:
-#line 114 "/root/compiler/PKUminic/src/sysy.y"
+#line 118 "/root/compiler/PKUminic/src/sysy.y"
               {
         (yyval.ast_decl) = ((yyvsp[-1].ast_decl));
     }
-#line 1558 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1565 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 9:
-#line 120 "/root/compiler/PKUminic/src/sysy.y"
+#line 124 "/root/compiler/PKUminic/src/sysy.y"
                            {//为左值新建一个声明类
         auto const_decl = new DeclareAST(yyget_lineno());
         const_decl->btype = ((yyvsp[-1].key_op));
         const_decl->define_list_.push_back(((yyvsp[0].ast_define)));//并将定义语句放入其中
         (yyval.ast_decl) = const_decl;
     }
-#line 1569 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1576 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 10:
-#line 127 "/root/compiler/PKUminic/src/sysy.y"
+#line 131 "/root/compiler/PKUminic/src/sysy.y"
                           {
         (yyval.ast_decl) = ((yyvsp[-2].ast_decl));//左递归
         (yyval.ast_decl)->define_list_.push_back((yyvsp[0].ast_define));//将定义语句的放入其中
     }
-#line 1578 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1585 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 12:
-#line 138 "/root/compiler/PKUminic/src/sysy.y"
+#line 142 "/root/compiler/PKUminic/src/sysy.y"
                  { (yyval.ast_define) = ((yyvsp[0].ast_define)); }
-#line 1584 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1591 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 13:
-#line 139 "/root/compiler/PKUminic/src/sysy.y"
+#line 143 "/root/compiler/PKUminic/src/sysy.y"
                    { (yyval.ast_define) = ((yyvsp[0].ast_define)); }
-#line 1590 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1597 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 14:
-#line 143 "/root/compiler/PKUminic/src/sysy.y"
+#line 147 "/root/compiler/PKUminic/src/sysy.y"
                        {
         (yyval.ast_define) = new DefOneInitAST(*unique_ptr<string>((yyvsp[-2].str_val)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), true, yyget_lineno());
     }
-#line 1598 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1605 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 15:
-#line 148 "/root/compiler/PKUminic/src/sysy.y"
+#line 152 "/root/compiler/PKUminic/src/sysy.y"
                                  {
         (yyval.ast_define) = new DefArrayInitAST(unique_ptr<IdentArrayAST>((yyvsp[-2].ast_identarray)), unique_ptr<InitValArrayAST>((yyvsp[0].initvalarray)), true, yyget_lineno());
     }
-#line 1606 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1613 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 16:
-#line 153 "/root/compiler/PKUminic/src/sysy.y"
+#line 157 "/root/compiler/PKUminic/src/sysy.y"
                        {
         (yyval.ast_identarray) = new IdentArrayAST(*unique_ptr<string>((yyvsp[-3].str_val)), yyget_lineno());
         (yyval.ast_identarray)->shape_list.push_back((yyvsp[-1].ast_exp));
     }
-#line 1615 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1622 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 17:
-#line 157 "/root/compiler/PKUminic/src/sysy.y"
+#line 161 "/root/compiler/PKUminic/src/sysy.y"
                             {//左递归 将数组维数加入至数组中
         (yyval.ast_identarray) = ((yyvsp[-3].ast_identarray));
         (yyval.ast_identarray)->shape_list.push_back((yyvsp[-1].ast_exp));
     }
-#line 1624 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1631 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 18:
-#line 163 "/root/compiler/PKUminic/src/sysy.y"
+#line 167 "/root/compiler/PKUminic/src/sysy.y"
               {
         (yyval.initvalarray) = new InitValArrayAST(false, NULL, yyget_lineno());
     }
-#line 1632 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1639 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 19:
-#line 166 "/root/compiler/PKUminic/src/sysy.y"
+#line 170 "/root/compiler/PKUminic/src/sysy.y"
                                {
         (yyval.initvalarray) = new InitValArrayAST(false, NULL, yyget_lineno());
         (yyval.initvalarray)->initvalarraylist.swap(*(yyvsp[-1].initcalarraylist));
         delete (yyvsp[-1].initcalarraylist);
     }
-#line 1642 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1649 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 20:
-#line 175 "/root/compiler/PKUminic/src/sysy.y"
+#line 179 "/root/compiler/PKUminic/src/sysy.y"
              {
         (yyval.initcalarraylist) = new vector<InitValArrayAST *>;
         (yyval.initcalarraylist)->push_back(new InitValArrayAST(true, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno()));
     }
-#line 1651 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1658 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 21:
-#line 179 "/root/compiler/PKUminic/src/sysy.y"
+#line 183 "/root/compiler/PKUminic/src/sysy.y"
                                   {
         (yyval.initcalarraylist) = ((yyvsp[-2].initcalarraylist));
         (yyval.initcalarraylist)->push_back(new InitValArrayAST(true, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno()));
     }
-#line 1660 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1667 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 22:
-#line 183 "/root/compiler/PKUminic/src/sysy.y"
+#line 187 "/root/compiler/PKUminic/src/sysy.y"
                   {
         (yyval.initcalarraylist) = new vector<InitValArrayAST *>;
         (yyval.initcalarraylist)->push_back((yyvsp[0].initvalarray));
     }
-#line 1669 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1676 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 23:
-#line 187 "/root/compiler/PKUminic/src/sysy.y"
+#line 191 "/root/compiler/PKUminic/src/sysy.y"
                                        {
         (yyval.initcalarraylist) = ((yyvsp[-2].initcalarraylist));
         (yyval.initcalarraylist)->push_back((yyvsp[0].initvalarray));
     }
-#line 1678 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1685 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 24:
-#line 194 "/root/compiler/PKUminic/src/sysy.y"
+#line 198 "/root/compiler/PKUminic/src/sysy.y"
          { //这里用了addexp,应该接exp。需修改TODO
         (yyval.ast_exp) = ((yyvsp[0].ast_exp)); 
     }
-#line 1686 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1693 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 25:
-#line 199 "/root/compiler/PKUminic/src/sysy.y"
+#line 203 "/root/compiler/PKUminic/src/sysy.y"
                 {
         auto var_decl = new DeclareAST(yyget_lineno());
         var_decl->btype = ((yyvsp[-1].key_op));
         var_decl->define_list_.push_back(((yyvsp[0].ast_define)));//并将定义语句放入其中
         (yyval.ast_decl) = var_decl;
     }
-#line 1697 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1704 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 26:
-#line 206 "/root/compiler/PKUminic/src/sysy.y"
+#line 210 "/root/compiler/PKUminic/src/sysy.y"
                     {
         (yyval.ast_decl) = ((yyvsp[-2].ast_decl));//左递归
         (yyval.ast_decl)->define_list_.push_back((yyvsp[0].ast_define));//将定义语句的放入其中
     }
-#line 1706 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1713 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 27:
-#line 212 "/root/compiler/PKUminic/src/sysy.y"
+#line 216 "/root/compiler/PKUminic/src/sysy.y"
             {
         (yyval.ast_define) = ((yyvsp[0].ast_define));
     }
-#line 1714 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1721 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 28:
-#line 215 "/root/compiler/PKUminic/src/sysy.y"
+#line 219 "/root/compiler/PKUminic/src/sysy.y"
               {
         (yyval.ast_define) = ((yyvsp[0].ast_define));
     }
-#line 1722 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1729 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 29:
-#line 220 "/root/compiler/PKUminic/src/sysy.y"
+#line 224 "/root/compiler/PKUminic/src/sysy.y"
                        {
         (yyval.ast_define) = new DefOneInitAST(*unique_ptr<string>((yyvsp[-2].str_val)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), false, yyget_lineno());
     }
-#line 1730 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1737 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 30:
-#line 223 "/root/compiler/PKUminic/src/sysy.y"
+#line 227 "/root/compiler/PKUminic/src/sysy.y"
            {
         (yyval.ast_define) = new DefOneAST(*unique_ptr<string>((yyvsp[0].str_val)), yyget_lineno());
     }
-#line 1738 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1745 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 31:
-#line 228 "/root/compiler/PKUminic/src/sysy.y"
+#line 232 "/root/compiler/PKUminic/src/sysy.y"
                                  {
         (yyval.ast_define) = new DefArrayInitAST(unique_ptr<IdentArrayAST>((yyvsp[-2].ast_identarray)), unique_ptr<InitValArrayAST>((yyvsp[0].initvalarray)), false, yyget_lineno());
     }
-#line 1746 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1753 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 32:
-#line 231 "/root/compiler/PKUminic/src/sysy.y"
+#line 235 "/root/compiler/PKUminic/src/sysy.y"
                 {
         (yyval.ast_define) = new DefArray(unique_ptr<IdentArrayAST>((yyvsp[0].ast_identarray)), yyget_lineno());
     }
-#line 1754 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1761 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 33:
-#line 237 "/root/compiler/PKUminic/src/sysy.y"
+#line 241 "/root/compiler/PKUminic/src/sysy.y"
                                {
         auto ast = new FuncDefAST(yyget_lineno());
         ast->func_type = "int";
@@ -1763,11 +1770,11 @@ yyreduce:
         ast->block = unique_ptr<StmtAST>((yyvsp[0].ast_block));
         (yyval.ast_val) = ast;
     }
-#line 1767 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1774 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 34:
-#line 245 "/root/compiler/PKUminic/src/sysy.y"
+#line 249 "/root/compiler/PKUminic/src/sysy.y"
                                                {
         auto ast = new FuncDefAST(yyget_lineno());
         ast->func_type = "int";
@@ -1776,11 +1783,11 @@ yyreduce:
         ast->block = unique_ptr<StmtAST>((yyvsp[0].ast_block));
         (yyval.ast_val) = ast;
     }
-#line 1780 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1787 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 35:
-#line 253 "/root/compiler/PKUminic/src/sysy.y"
+#line 257 "/root/compiler/PKUminic/src/sysy.y"
                               {
         auto ast = new FuncDefAST(yyget_lineno());
         ast->func_type = "void";
@@ -1790,11 +1797,11 @@ yyreduce:
         ast->block = unique_ptr<StmtAST>((yyvsp[0].ast_block));
         (yyval.ast_val) = ast;
     }
-#line 1794 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1801 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 36:
-#line 262 "/root/compiler/PKUminic/src/sysy.y"
+#line 266 "/root/compiler/PKUminic/src/sysy.y"
                                               {
         auto ast = new FuncDefAST(yyget_lineno());
         ast->func_type = "void";
@@ -1804,485 +1811,518 @@ yyreduce:
         ast->block = unique_ptr<StmtAST>((yyvsp[0].ast_block));
         (yyval.ast_val) = ast;
     }
-#line 1808 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1815 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 37:
-#line 274 "/root/compiler/PKUminic/src/sysy.y"
+#line 278 "/root/compiler/PKUminic/src/sysy.y"
                 {
         (yyval.ast_funcFlist) = new FuncFParamsListAST(yyget_lineno());
         (yyval.ast_funcFlist)->funcfparamlist.push_back((yyvsp[0].ast_funcF));
 
     }
-#line 1818 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1825 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 38:
-#line 279 "/root/compiler/PKUminic/src/sysy.y"
+#line 283 "/root/compiler/PKUminic/src/sysy.y"
                                     {
         (yyval.ast_funcFlist) = ((yyvsp[-2].ast_funcFlist));
         (yyval.ast_funcFlist)->funcfparamlist.push_back((yyvsp[0].ast_funcF));//左递归
     }
-#line 1827 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1834 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 39:
+#line 289 "/root/compiler/PKUminic/src/sysy.y"
+                   {
+        (yyval.ast_funcF) = static_cast<FuncFParamAST*>((yyvsp[0].ast_funcFone));
+    }
+#line 1842 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 40:
-#line 289 "/root/compiler/PKUminic/src/sysy.y"
-                 {
-        (yyval.ast_funcF) = new FuncFParamAST(*unique_ptr<string>((yyvsp[0].str_val)), yyget_lineno());
+#line 292 "/root/compiler/PKUminic/src/sysy.y"
+                     {
+        (yyval.ast_funcF) = static_cast<FuncFParamAST*>((yyvsp[0].ast_funcFarray));
     }
-#line 1835 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1850 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 41:
-#line 294 "/root/compiler/PKUminic/src/sysy.y"
-                           {
-        (yyval.ast_block) = ((yyvsp[-1].ast_block));
+#line 299 "/root/compiler/PKUminic/src/sysy.y"
+                 {
+        (yyval.ast_funcFone) = new FuncFParamOneAST(*unique_ptr<string>((yyvsp[0].str_val)), yyget_lineno());
     }
-#line 1843 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1858 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 42:
-#line 297 "/root/compiler/PKUminic/src/sysy.y"
+#line 304 "/root/compiler/PKUminic/src/sysy.y"
+                          {
+        (yyval.ast_funcFarray) = new FuncFParamArrayAST(*unique_ptr<string>((yyvsp[-2].str_val)), yyget_lineno());
+    }
+#line 1866 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 43:
+#line 307 "/root/compiler/PKUminic/src/sysy.y"
+                                 {
+        (yyval.ast_funcFarray) = ((yyvsp[-3].ast_funcFarray));
+        (yyval.ast_funcFarray)->shape_list.push_back((yyvsp[-1].ast_exp));
+    }
+#line 1875 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 44:
+#line 314 "/root/compiler/PKUminic/src/sysy.y"
+                           {
+        (yyval.ast_block) = ((yyvsp[-1].ast_block));
+    }
+#line 1883 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 45:
+#line 317 "/root/compiler/PKUminic/src/sysy.y"
              {
         auto ast = new BlockItemAST(yyget_lineno());//blockitemlist中为空
         (yyval.ast_block) = ast;
     }
-#line 1852 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1892 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 43:
-#line 303 "/root/compiler/PKUminic/src/sysy.y"
+  case 46:
+#line 323 "/root/compiler/PKUminic/src/sysy.y"
                {
         auto ast = new BlockItemAST(yyget_lineno());
         ast->blockitemlist.push_back((yyvsp[0].ast_stmt));
         (yyval.ast_block) = ast;
     }
-#line 1862 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1902 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 44:
-#line 308 "/root/compiler/PKUminic/src/sysy.y"
+  case 47:
+#line 328 "/root/compiler/PKUminic/src/sysy.y"
                              {
         (yyval.ast_block) = ((yyvsp[-1].ast_block));//左递归
         (yyval.ast_block)->blockitemlist.push_back((yyvsp[0].ast_stmt)); //将语句块放入
     }
-#line 1871 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1911 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 45:
-#line 315 "/root/compiler/PKUminic/src/sysy.y"
+  case 48:
+#line 335 "/root/compiler/PKUminic/src/sysy.y"
           {
         (yyval.ast_stmt) = static_cast<StmtAST*>((yyvsp[0].ast_decl));
     }
-#line 1879 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1919 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 46:
-#line 318 "/root/compiler/PKUminic/src/sysy.y"
-          { (yyval.ast_stmt) = ((yyvsp[0].ast_stmt)); }
-#line 1885 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 51:
-#line 326 "/root/compiler/PKUminic/src/sysy.y"
-           {
-        (yyval.ast_stmt) = static_cast<StmtAST*>((yyvsp[0].ast_block));
-    }
-#line 1893 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 52:
-#line 329 "/root/compiler/PKUminic/src/sysy.y"
-             {
-        (yyval.ast_stmt) = static_cast<StmtAST*>(new ExpstmtAST(unique_ptr<ExpAST>((yyvsp[-1].ast_exp)), yyget_lineno()));
-    }
-#line 1901 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 53:
-#line 332 "/root/compiler/PKUminic/src/sysy.y"
-               {
-        (yyval.ast_stmt) = static_cast<StmtAST*>(new BreakstmtAST(yyget_lineno()));
-    }
-#line 1909 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 54:
-#line 335 "/root/compiler/PKUminic/src/sysy.y"
-                  {
-        (yyval.ast_stmt) = static_cast<StmtAST*>(new ContinuestmtAST(yyget_lineno()));
-    }
-#line 1917 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 55:
+  case 49:
 #line 338 "/root/compiler/PKUminic/src/sysy.y"
-         {
-        (yyval.ast_stmt) = static_cast<StmtAST*>(new VoidstmtAST(yyget_lineno()));
-    }
+          { (yyval.ast_stmt) = ((yyvsp[0].ast_stmt)); }
 #line 1925 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
+  case 54:
+#line 346 "/root/compiler/PKUminic/src/sysy.y"
+           {
+        (yyval.ast_stmt) = static_cast<StmtAST*>((yyvsp[0].ast_block));
+    }
+#line 1933 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 55:
+#line 349 "/root/compiler/PKUminic/src/sysy.y"
+             {
+        (yyval.ast_stmt) = static_cast<StmtAST*>(new ExpstmtAST(unique_ptr<ExpAST>((yyvsp[-1].ast_exp)), yyget_lineno()));
+    }
+#line 1941 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
   case 56:
-#line 343 "/root/compiler/PKUminic/src/sysy.y"
+#line 352 "/root/compiler/PKUminic/src/sysy.y"
+               {
+        (yyval.ast_stmt) = static_cast<StmtAST*>(new BreakstmtAST(yyget_lineno()));
+    }
+#line 1949 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 57:
+#line 355 "/root/compiler/PKUminic/src/sysy.y"
+                  {
+        (yyval.ast_stmt) = static_cast<StmtAST*>(new ContinuestmtAST(yyget_lineno()));
+    }
+#line 1957 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 58:
+#line 358 "/root/compiler/PKUminic/src/sysy.y"
+         {
+        (yyval.ast_stmt) = static_cast<StmtAST*>(new VoidstmtAST(yyget_lineno()));
+    }
+#line 1965 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 59:
+#line 363 "/root/compiler/PKUminic/src/sysy.y"
                     {
         auto ast = new ReturnStmtAST(yyget_lineno());
         ast->Exp = unique_ptr<ExpAST>((yyvsp[-1].ast_exp));
         (yyval.ast_stmt) = ast;
     }
-#line 1935 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 1975 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 57:
-#line 348 "/root/compiler/PKUminic/src/sysy.y"
+  case 60:
+#line 368 "/root/compiler/PKUminic/src/sysy.y"
                 {
         auto ast = new ReturnStmtAST(yyget_lineno());
         ast->Exp = NULL;//表示该部分无返回值
         (yyval.ast_stmt) = ast;
     }
-#line 1945 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 58:
-#line 355 "/root/compiler/PKUminic/src/sysy.y"
-                     {
-        (yyval.ast_stmt) = new AssignStmtAST(unique_ptr<LeftValAST>((yyvsp[-3].ast_lval)), unique_ptr<ExpAST>((yyvsp[-1].ast_exp)), yyget_lineno());
-    }
-#line 1953 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 59:
-#line 360 "/root/compiler/PKUminic/src/sysy.y"
-                         {
-        (yyval.ast_stmt) = new IfElseStmtAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), unique_ptr<StmtAST>((yyvsp[0].ast_stmt)), NULL, yyget_lineno());
-    }
-#line 1961 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 60:
-#line 363 "/root/compiler/PKUminic/src/sysy.y"
-                                   {
-        (yyval.ast_stmt) = new IfElseStmtAST(unique_ptr<ExpAST>((yyvsp[-4].ast_exp)), unique_ptr<StmtAST>((yyvsp[-2].ast_stmt)), unique_ptr<StmtAST>((yyvsp[0].ast_stmt)), yyget_lineno());
-    }
-#line 1969 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 61:
-#line 368 "/root/compiler/PKUminic/src/sysy.y"
-                            {
-        (yyval.ast_stmt) = new WhileStmtAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), unique_ptr<StmtAST>((yyvsp[0].ast_stmt)), yyget_lineno());
-    }
-#line 1977 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 62:
-#line 373 "/root/compiler/PKUminic/src/sysy.y"
-            { 
-        (yyval.ast_exp) = ((yyvsp[0].ast_exp)); 
-    }
 #line 1985 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 63:
-#line 378 "/root/compiler/PKUminic/src/sysy.y"
-           {
-        (yyval.ast_lval) = new LeftValAST(unique_ptr<IdentifierAST>((yyvsp[0].ast_ident)), NULL, yyget_lineno());
+  case 61:
+#line 375 "/root/compiler/PKUminic/src/sysy.y"
+                     {
+        (yyval.ast_stmt) = new AssignStmtAST(unique_ptr<LeftValAST>((yyvsp[-3].ast_lval)), unique_ptr<ExpAST>((yyvsp[-1].ast_exp)), yyget_lineno());
     }
 #line 1993 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 64:
-#line 381 "/root/compiler/PKUminic/src/sysy.y"
-                {
-        (yyval.ast_lval) = new LeftValAST(NULL, unique_ptr<IdentArrayAST>((yyvsp[0].ast_identarray)), yyget_lineno());
+  case 62:
+#line 380 "/root/compiler/PKUminic/src/sysy.y"
+                         {
+        (yyval.ast_stmt) = new IfElseStmtAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), unique_ptr<StmtAST>((yyvsp[0].ast_stmt)), NULL, yyget_lineno());
     }
 #line 2001 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 65:
-#line 386 "/root/compiler/PKUminic/src/sysy.y"
-                 {
-        (yyval.ast_exp) = new PrimaryExpAST(0, unique_ptr<ExpAST>((yyvsp[-1].ast_exp)), NULL, yyget_lineno());
+  case 63:
+#line 383 "/root/compiler/PKUminic/src/sysy.y"
+                                   {
+        (yyval.ast_stmt) = new IfElseStmtAST(unique_ptr<ExpAST>((yyvsp[-4].ast_exp)), unique_ptr<StmtAST>((yyvsp[-2].ast_stmt)), unique_ptr<StmtAST>((yyvsp[0].ast_stmt)), yyget_lineno());
     }
 #line 2009 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 66:
-#line 389 "/root/compiler/PKUminic/src/sysy.y"
-          {
-        (yyval.ast_exp) = new PrimaryExpAST(0, NULL, unique_ptr<LeftValAST>((yyvsp[0].ast_lval)), yyget_lineno());
+  case 64:
+#line 388 "/root/compiler/PKUminic/src/sysy.y"
+                            {
+        (yyval.ast_stmt) = new WhileStmtAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), unique_ptr<StmtAST>((yyvsp[0].ast_stmt)), yyget_lineno());
     }
 #line 2017 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 67:
-#line 392 "/root/compiler/PKUminic/src/sysy.y"
+  case 65:
+#line 393 "/root/compiler/PKUminic/src/sysy.y"
             { 
-        (yyval.ast_exp) = new PrimaryExpAST(((yyvsp[0].int_val)), NULL, NULL, yyget_lineno());
+        (yyval.ast_exp) = ((yyvsp[0].ast_exp)); 
     }
 #line 2025 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 68:
+  case 66:
 #line 398 "/root/compiler/PKUminic/src/sysy.y"
            {
-        (yyval.ast_ident) = new IdentifierAST(*unique_ptr<string>((yyvsp[0].str_val)), yyget_lineno());
+        (yyval.ast_lval) = new LeftValAST(unique_ptr<IdentifierAST>((yyvsp[0].ast_ident)), NULL, yyget_lineno());
     }
 #line 2033 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
+  case 67:
+#line 401 "/root/compiler/PKUminic/src/sysy.y"
+                {
+        (yyval.ast_lval) = new LeftValAST(NULL, unique_ptr<IdentArrayAST>((yyvsp[0].ast_identarray)), yyget_lineno());
+    }
+#line 2041 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 68:
+#line 406 "/root/compiler/PKUminic/src/sysy.y"
+                 {
+        (yyval.ast_exp) = new PrimaryExpAST(0, unique_ptr<ExpAST>((yyvsp[-1].ast_exp)), NULL, yyget_lineno());
+    }
+#line 2049 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
   case 69:
-#line 403 "/root/compiler/PKUminic/src/sysy.y"
+#line 409 "/root/compiler/PKUminic/src/sysy.y"
+          {
+        (yyval.ast_exp) = new PrimaryExpAST(0, NULL, unique_ptr<LeftValAST>((yyvsp[0].ast_lval)), yyget_lineno());
+    }
+#line 2057 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 70:
+#line 412 "/root/compiler/PKUminic/src/sysy.y"
+            { 
+        (yyval.ast_exp) = new PrimaryExpAST(((yyvsp[0].int_val)), NULL, NULL, yyget_lineno());
+    }
+#line 2065 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 71:
+#line 418 "/root/compiler/PKUminic/src/sysy.y"
+           {
+        (yyval.ast_ident) = new IdentifierAST(*unique_ptr<string>((yyvsp[0].str_val)), yyget_lineno());
+    }
+#line 2073 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 72:
+#line 423 "/root/compiler/PKUminic/src/sysy.y"
                 { 
         (yyval.ast_exp) = new UnaryExpAST(unique_ptr<ExpAST>((yyvsp[0].ast_exp)), 0, NULL, NULL, yyget_lineno());
         
     }
-#line 2042 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2082 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 70:
-#line 407 "/root/compiler/PKUminic/src/sysy.y"
+  case 73:
+#line 427 "/root/compiler/PKUminic/src/sysy.y"
                       {
         (yyval.ast_exp) = new UnaryExpAST(NULL, ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
         
     }
-#line 2051 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 71:
-#line 411 "/root/compiler/PKUminic/src/sysy.y"
-              {
-        (yyval.ast_exp) = new UnaryExpAST(NULL, 0, NULL, unique_ptr<FuncCallAST>((yyvsp[0].ast_funcR)), yyget_lineno());
-    }
-#line 2059 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 72:
-#line 416 "/root/compiler/PKUminic/src/sysy.y"
-                                   {
-        (yyval.ast_funcR) = new FuncCallAST(*unique_ptr<string>((yyvsp[-3].str_val)), unique_ptr<FuncRParamsListAST>((yyvsp[-1].ast_funcRlist)), yyget_lineno());
-    }
-#line 2067 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 73:
-#line 419 "/root/compiler/PKUminic/src/sysy.y"
-                   {
-        (yyval.ast_funcR) = new FuncCallAST(*unique_ptr<string>((yyvsp[-2].str_val)), NULL, yyget_lineno());
-    }
-#line 2075 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2091 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 74:
-#line 424 "/root/compiler/PKUminic/src/sysy.y"
+#line 431 "/root/compiler/PKUminic/src/sysy.y"
+              {
+        (yyval.ast_exp) = new UnaryExpAST(NULL, 0, NULL, unique_ptr<FuncCallAST>((yyvsp[0].ast_funcR)), yyget_lineno());
+    }
+#line 2099 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 75:
+#line 436 "/root/compiler/PKUminic/src/sysy.y"
+                                   {
+        (yyval.ast_funcR) = new FuncCallAST(*unique_ptr<string>((yyvsp[-3].str_val)), unique_ptr<FuncRParamsListAST>((yyvsp[-1].ast_funcRlist)), yyget_lineno());
+    }
+#line 2107 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 76:
+#line 439 "/root/compiler/PKUminic/src/sysy.y"
+                   {
+        (yyval.ast_funcR) = new FuncCallAST(*unique_ptr<string>((yyvsp[-2].str_val)), NULL, yyget_lineno());
+    }
+#line 2115 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 77:
+#line 444 "/root/compiler/PKUminic/src/sysy.y"
           {
         (yyval.ast_funcRlist) = new FuncRParamsListAST(yyget_lineno());
         (yyval.ast_funcRlist)->rparamslist.push_back((yyvsp[0].ast_exp));
     }
-#line 2084 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2124 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 75:
-#line 428 "/root/compiler/PKUminic/src/sysy.y"
+  case 78:
+#line 448 "/root/compiler/PKUminic/src/sysy.y"
                               {
         (yyval.ast_funcRlist) = ((yyvsp[-2].ast_funcRlist));
         (yyval.ast_funcRlist)->rparamslist.push_back((yyvsp[0].ast_exp));
     }
-#line 2093 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 76:
-#line 434 "/root/compiler/PKUminic/src/sysy.y"
-              {
-        (yyval.ast_exp) = new BinaryExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
-    }
-#line 2101 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 77:
-#line 437 "/root/compiler/PKUminic/src/sysy.y"
-                             {
-        (yyval.ast_exp) = new BinaryExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
-    }
-#line 2109 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 78:
-#line 442 "/root/compiler/PKUminic/src/sysy.y"
-             {
-        (yyval.ast_exp) = new BinaryExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
-    }
-#line 2117 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2133 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 79:
-#line 445 "/root/compiler/PKUminic/src/sysy.y"
-                          {
-        (yyval.ast_exp) = new BinaryExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
-     }
-#line 2125 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 454 "/root/compiler/PKUminic/src/sysy.y"
+              {
+        (yyval.ast_exp) = new BinaryExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
+    }
+#line 2141 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 80:
-#line 450 "/root/compiler/PKUminic/src/sysy.y"
-             {
-        (yyval.ast_exp) = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
-
+#line 457 "/root/compiler/PKUminic/src/sysy.y"
+                             {
+        (yyval.ast_exp) = new BinaryExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
     }
-#line 2134 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2149 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 81:
-#line 454 "/root/compiler/PKUminic/src/sysy.y"
-                         {
-        (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
-     }
-#line 2142 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 462 "/root/compiler/PKUminic/src/sysy.y"
+             {
+        (yyval.ast_exp) = new BinaryExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
+    }
+#line 2157 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 82:
-#line 459 "/root/compiler/PKUminic/src/sysy.y"
-            {
-        (yyval.ast_exp) = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
-    }
-#line 2150 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 465 "/root/compiler/PKUminic/src/sysy.y"
+                          {
+        (yyval.ast_exp) = new BinaryExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
+     }
+#line 2165 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 83:
-#line 462 "/root/compiler/PKUminic/src/sysy.y"
-                          {
-        (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
-    }
-#line 2158 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 84:
-#line 467 "/root/compiler/PKUminic/src/sysy.y"
-            {
-        (yyval.ast_exp) = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
-    }
-#line 2166 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 85:
 #line 470 "/root/compiler/PKUminic/src/sysy.y"
-                       {
-        (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
+             {
+        (yyval.ast_exp) = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
+
     }
 #line 2174 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 86:
-#line 475 "/root/compiler/PKUminic/src/sysy.y"
-              {
-        (yyval.ast_exp) = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
-    }
+  case 84:
+#line 474 "/root/compiler/PKUminic/src/sysy.y"
+                         {
+        (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
+     }
 #line 2182 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 87:
-#line 478 "/root/compiler/PKUminic/src/sysy.y"
-                       {
-        (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
+  case 85:
+#line 479 "/root/compiler/PKUminic/src/sysy.y"
+            {
+        (yyval.ast_exp) = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
     }
 #line 2190 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 88:
-#line 483 "/root/compiler/PKUminic/src/sysy.y"
-                {
-        (yyval.int_val) = ((yyvsp[0].int_val));
+  case 86:
+#line 482 "/root/compiler/PKUminic/src/sysy.y"
+                          {
+        (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
     }
 #line 2198 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
+  case 87:
+#line 487 "/root/compiler/PKUminic/src/sysy.y"
+            {
+        (yyval.ast_exp) = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
+    }
+#line 2206 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 88:
+#line 490 "/root/compiler/PKUminic/src/sysy.y"
+                       {
+        (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
+    }
+#line 2214 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
   case 89:
-#line 488 "/root/compiler/PKUminic/src/sysy.y"
-        { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2204 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 90:
-#line 489 "/root/compiler/PKUminic/src/sysy.y"
-        { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2210 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 91:
-#line 492 "/root/compiler/PKUminic/src/sysy.y"
-        { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2216 "/root/compiler/PKUminic/build/sysy.tab.cpp"
-    break;
-
-  case 92:
-#line 493 "/root/compiler/PKUminic/src/sysy.y"
-        { (yyval.key_op) = ((yyvsp[0].key_op)); }
+#line 495 "/root/compiler/PKUminic/src/sysy.y"
+              {
+        (yyval.ast_exp) = new CondExpAST(NULL, 0, NULL, unique_ptr<ExpAST>((yyvsp[0].ast_exp)), yyget_lineno());
+    }
 #line 2222 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
-  case 93:
-#line 494 "/root/compiler/PKUminic/src/sysy.y"
+  case 90:
+#line 498 "/root/compiler/PKUminic/src/sysy.y"
+                       {
+        (yyval.ast_exp) = new CondExpAST(unique_ptr<ExpAST>((yyvsp[-2].ast_exp)), ((yyvsp[-1].key_op)), unique_ptr<ExpAST>((yyvsp[0].ast_exp)), NULL, yyget_lineno());
+    }
+#line 2230 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 91:
+#line 503 "/root/compiler/PKUminic/src/sysy.y"
+                {
+        (yyval.int_val) = ((yyvsp[0].int_val));
+    }
+#line 2238 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 92:
+#line 508 "/root/compiler/PKUminic/src/sysy.y"
         { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2228 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2244 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 93:
+#line 509 "/root/compiler/PKUminic/src/sysy.y"
+        { (yyval.key_op) = ((yyvsp[0].key_op)); }
+#line 2250 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 94:
-#line 495 "/root/compiler/PKUminic/src/sysy.y"
+#line 512 "/root/compiler/PKUminic/src/sysy.y"
         { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2234 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2256 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 95:
-#line 498 "/root/compiler/PKUminic/src/sysy.y"
-         { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2240 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 513 "/root/compiler/PKUminic/src/sysy.y"
+        { (yyval.key_op) = ((yyvsp[0].key_op)); }
+#line 2262 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 96:
-#line 499 "/root/compiler/PKUminic/src/sysy.y"
-         { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2246 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 514 "/root/compiler/PKUminic/src/sysy.y"
+        { (yyval.key_op) = ((yyvsp[0].key_op)); }
+#line 2268 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 97:
-#line 500 "/root/compiler/PKUminic/src/sysy.y"
-         { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2252 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 515 "/root/compiler/PKUminic/src/sysy.y"
+        { (yyval.key_op) = ((yyvsp[0].key_op)); }
+#line 2274 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 98:
-#line 503 "/root/compiler/PKUminic/src/sysy.y"
+#line 518 "/root/compiler/PKUminic/src/sysy.y"
          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2258 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2280 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 99:
-#line 504 "/root/compiler/PKUminic/src/sysy.y"
+#line 519 "/root/compiler/PKUminic/src/sysy.y"
          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2264 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2286 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 100:
-#line 507 "/root/compiler/PKUminic/src/sysy.y"
-          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2270 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 520 "/root/compiler/PKUminic/src/sysy.y"
+         { (yyval.key_op) = ((yyvsp[0].key_op)); }
+#line 2292 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 101:
-#line 508 "/root/compiler/PKUminic/src/sysy.y"
+#line 523 "/root/compiler/PKUminic/src/sysy.y"
          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2276 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2298 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
   case 102:
-#line 509 "/root/compiler/PKUminic/src/sysy.y"
+#line 524 "/root/compiler/PKUminic/src/sysy.y"
          { (yyval.key_op) = ((yyvsp[0].key_op)); }
-#line 2282 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2304 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 103:
+#line 527 "/root/compiler/PKUminic/src/sysy.y"
+          { (yyval.key_op) = ((yyvsp[0].key_op)); }
+#line 2310 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 104:
+#line 528 "/root/compiler/PKUminic/src/sysy.y"
+         { (yyval.key_op) = ((yyvsp[0].key_op)); }
+#line 2316 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+    break;
+
+  case 105:
+#line 529 "/root/compiler/PKUminic/src/sysy.y"
+         { (yyval.key_op) = ((yyvsp[0].key_op)); }
+#line 2322 "/root/compiler/PKUminic/build/sysy.tab.cpp"
     break;
 
 
-#line 2286 "/root/compiler/PKUminic/build/sysy.tab.cpp"
+#line 2326 "/root/compiler/PKUminic/build/sysy.tab.cpp"
 
       default: break;
     }
@@ -2514,7 +2554,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 511 "/root/compiler/PKUminic/src/sysy.y"
+#line 531 "/root/compiler/PKUminic/src/sysy.y"
 
 
 

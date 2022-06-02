@@ -74,7 +74,7 @@ class IdentArrayAST : public ExpAST
 public:
     std::string ident_name;
     std::vector<ExpAST *> shape_list;
-
+    
     IdentArrayAST(std::string ident_name, int line_num);
     std::string Dump(std::string &inputstr, symbol::astinfo &astinfo) const override; //用于查找数组中 index 的变量，计算出其地址但不 load
     void arrayalloc(std::string &inputstr, symbol::astinfo &astinfo);                 //用于声明使用
@@ -124,7 +124,7 @@ public:
     std::string Dump(std::string &inputstr, symbol::astinfo &astinfo);
 };
 
-//函数形参列表
+//函数实参列表
 class FuncRParamsListAST
 {
 public:
@@ -132,7 +132,7 @@ public:
     std::vector<ExpAST *> rparamslist;
 
     FuncRParamsListAST(int line_num) : line_num(line_num){};
-    void Dump(std::string &inputstr, symbol::astinfo &astinfo, std::vector<string> &rparamsymbol);
+    void Dump(std::string &inputstr, symbol::astinfo &astinfo, std::vector<string> &rparamsymbol, std::string ident_name);
 };
 
 // 二元运算类 AST
@@ -206,14 +206,39 @@ public:
     void FuncFParamLISTAlloc(std::string &inputstr, symbol::astinfo &astinfo);
 };
 
-class FuncFParamAST : public BaseAST
+//函数参数表项的父类
+class FuncFParamAST
+{
+public:
+    int line_num;
+
+    FuncFParamAST(int line_num) : line_num(line_num){};
+    virtual ~FuncFParamAST() = default;
+    virtual void Dump(std::string &inputstr, symbol::astinfo &astinfo) const = 0;
+    virtual void FuncFParamAlloc(std::string &inputstr, symbol::astinfo &astinfo) const = 0;
+};
+
+// 变量 参数表项
+class FuncFParamOneAST : public FuncFParamAST
 {
 public:
     std::string ident_name;
 
-    FuncFParamAST(std::string ident_name, int line_num);
+    FuncFParamOneAST(std::string ident_name, int line_num);
     void Dump(std::string &inputstr, symbol::astinfo &astinfo) const override;
-    void FuncFParamAlloc(std::string &inputstr, symbol::astinfo &astinfo);
+    void FuncFParamAlloc(std::string &inputstr, symbol::astinfo &astinfo) const override;
+};
+
+// 数组变量 参数参数表项
+class FuncFParamArrayAST : public FuncFParamAST
+{
+public:
+    std::string ident_name;
+    std::vector<ExpAST *> shape_list; //数组除第一维外的长度
+
+    FuncFParamArrayAST(std::string ident_name, int line_num);
+    void Dump(std::string &inputstr, symbol::astinfo &astinfo) const override;
+    void FuncFParamAlloc(std::string &inputstr, symbol::astinfo &astinfo) const override;
 };
 
 // ====================  语句 相关基类 ====================
@@ -373,6 +398,7 @@ class DefArrayInitAST : public DefineAST
 {
 public:
     bool is_const;
+
     std::unique_ptr<IdentArrayAST> identarray;
     std::unique_ptr<InitValArrayAST> initvalarray;
 
@@ -392,7 +418,7 @@ public:
     std::vector<InitValArrayAST *> initvalarraylist; // 如果为表达式则此vector的size为0
 
     InitValArrayAST(bool is_exp, std::unique_ptr<ExpAST> initval, int line_num);
-    void aggreate(std::string &inputstr, symbol::astinfo &astinfo, symbol::SymbolItem &item);                    //使用aggregate初始化数组
+    void aggreate(std::string &inputstr, symbol::astinfo &astinfo, symbol::SymbolItem &item, int deep);          //使用aggregate初始化数组
     void cal(symbol::astinfo &astinfo, symbol::SymbolItem &item);                                                //递归遍历自身，将结果写入item.result中
     void init_store(std::string &inputstr, symbol::astinfo &astinfo, symbol::SymbolItem &item);                  //使用getelemptr 和 store 初始化数组
     void assign_arrayval(string &inputstr, symbol::astinfo &astinfo, symbol::SymbolItem &item, string storesrc); // 针对每个数值使用getelemptr 和 store初始化赋值

@@ -99,6 +99,8 @@ union YYSTYPE
     FuncTypeAST *ast_functype;
     FuncFParamsListAST *ast_funcFlist;
     FuncFParamAST *ast_funcF;
+    FuncFParamOneAST *ast_funcFone;
+    FuncFParamArrayAST *ast_funcFarray;
     ExpAST *ast_exp;
     FuncRParamsListAST *ast_funcRlist;
     FuncCallAST *ast_funcR;
@@ -112,7 +114,7 @@ union YYSTYPE
     InitValArrayAST *initvalarray;
     std::vector<InitValArrayAST *> *initcalarraylist;
 
-#line 116 "/root/compiler/PKUminic/build/sysy.tab.hpp"
+#line 118 "/root/compiler/PKUminic/build/sysy.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

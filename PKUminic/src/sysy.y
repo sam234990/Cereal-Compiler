@@ -33,6 +33,8 @@ using namespace std;
     FuncTypeAST *ast_functype;
     FuncFParamsListAST *ast_funcFlist;
     FuncFParamAST *ast_funcF;
+    FuncFParamOneAST *ast_funcFone;
+    FuncFParamArrayAST *ast_funcFarray;
     ExpAST *ast_exp;
     FuncRParamsListAST *ast_funcRlist;
     FuncCallAST *ast_funcR;
@@ -65,7 +67,9 @@ using namespace std;
 %type <ast_val> Root 
 %type <ast_comp> CompUnit
 %type <ast_funcFlist> FuncFParamsList
-%type <ast_funcF> FuncFParam FuncFParamOne 
+%type <ast_funcF> FuncFParam 
+%type <ast_funcFone> FuncFParamOne 
+%type <ast_funcFarray> FuncFParamArray
 %type <ast_stmt> Stmt BlockItem ReturnStmt AssignStmt IfStmt WhileStmt
 %type <ast_block> Block BlockItemList
 %type <ast_ident> Ident
@@ -282,13 +286,29 @@ FuncFParamsList
     };
 
 FuncFParam
-    : FuncFParamOne;
+    : FuncFParamOne{
+        $$ = static_cast<FuncFParamAST*>($1);
+    }
+    | FuncFParamArray{
+        $$ = static_cast<FuncFParamAST*>($1);
+    }
+    ;
     
 
 FuncFParamOne
     : BType IDENT{
-        $$ = new FuncFParamAST(*unique_ptr<string>($2), yyget_lineno());
+        $$ = new FuncFParamOneAST(*unique_ptr<string>($2), yyget_lineno());
     };
+
+FuncFParamArray
+    : BType IDENT '[' ']' {
+        $$ = new FuncFParamArrayAST(*unique_ptr<string>($2), yyget_lineno());
+    }
+    | FuncFParamArray '[' Exp ']'{
+        $$ = ($1);
+        $$->shape_list.push_back($3);
+    };
+
 
 Block
     : '{' BlockItemList '}'{

@@ -21,11 +21,12 @@ namespace symbol
     public:
         bool is_const;              //是否是const 类型
         bool is_array;              // 是否是数组 类型
+        bool is_funcFparam;         //是否是函数形参
         int dimension_len;          // 表示数组有几个维数 数值类型应为 0
-        vector<int> dimension_size; // 表示数组每一维度的深度，从底到外
+        vector<int> dimension_size; // 表示数组每一维度的深度 [2][3][4]
         // std::vector<int> dim_total_num; // a[2][3][4] -> 24,12,4,1
-        vector<int> result;         //如果是constdefone应该有结果。数值类型有1 个值。数组展开后存成1维结果
-        string koopa_ir_name;       // 该符号在koopa ir中的名称，一般为 @name1，最后数字表示第几个重复定义
+        vector<int> result;   //如果是constdefone应该有结果。数值类型有1 个值。数组展开后存成1维结果
+        string koopa_ir_name; // 该符号在koopa ir中的名称，一般为 @name1，最后数字表示第几个重复定义
 
         SymbolItem(){};
         SymbolItem(bool is_const, bool is_array);
@@ -85,10 +86,13 @@ namespace symbol
         int break_num;     // 程序中break的数量
         int continue_num;  // 程序中continue的数量
         string func_type;  //当前所处函数的返回值类型
+        string func_name;  //当前所处函数的名称
         int array_offset;
         int brace_num;                  // 当前位置(array_offset_)有几个大括号
         std::vector<int> dim_total_num; // a[2][3][4] -> 24,12,4,1
-
+        bool is_funcRparam;             // 判断当前 数组IdentArrayAST 是否作为函数实参
+        std::vector<int> funcRpara_size; // 用于判断当前所指的实参的类型。
+        
         astinfo();
         ~astinfo() = default;
         void reset_array_info(); // 重置数组有关的全局变量信息

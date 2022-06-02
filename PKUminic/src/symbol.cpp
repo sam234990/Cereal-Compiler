@@ -15,6 +15,7 @@ namespace symbol
     {
         this->is_const = is_const;
         this->is_array = is_array;
+        this->is_funcFparam = false;//默认为不是
         result.reserve(5);
     }
 
@@ -105,37 +106,29 @@ namespace symbol
 
     std::string kirinfo::find_value_in_stack(std::ostream &outfile, koopa_raw_value_t value)
     {
+        int temp;
         if (this->stack_value_base != 0)
-        { //如果有实参占用栈帧
-            int temp = this->stack_map[value] + this->stack_value_base;
-            if (temp > 2047)
-            { //如果数值大于12位立即数
-                string treg = "t" + std::to_string(this->register_num++);
-                outfile << "  li\t" + treg + ", " + std::to_string(temp) + "\n";
-                outfile << "  add\t" + treg + ", sp, " + treg + "\n";
-                return "0(" + treg + ")";
-            }
-            else
-            {
-                return std::to_string(temp) + "(sp)";
-            }
+        {
+            temp = this->stack_map[value] + this->stack_value_base;
         }
         else
-        { // 如果没有实参占用栈帧
-            int temp = this->stack_map[value];
-            if (temp > 2047)
-            { //如果数值大于12位立即数
-                string treg = "t" + std::to_string(this->register_num++);
-                outfile << "  li\t" + treg + ", " + std::to_string(temp) + "\n";
-                outfile << "  add\t" + treg + ", sp, " + treg + "\n";
-                return "0(" + treg + ")";
-            }
-            else
-            {
-                return std::to_string(temp) + "(sp)";
-            }
+        {
+            temp = this->stack_map[value];
+        }
+        
+        if (temp > 2047)
+        { //如果数值大于12位立即数
+            string treg = "t" + std::to_string(this->register_num++);
+            outfile << "  li\t" + treg + ", " + std::to_string(temp) + "\n";
+            outfile << "  add\t" + treg + ", sp, " + treg + "\n";
+            return "0(" + treg + ")";
+        }
+        else
+        {
+            return std::to_string(temp) + "(sp)";
         }
     }
+
     int kirinfo::find_value_in_stack_int(koopa_raw_value_t value)
     {
         if (this->stack_value_base != 0)

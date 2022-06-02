@@ -1,322 +1,708 @@
-  .text
-  .globl sum
-sum:
-  addi	sp, sp, -96
-	 #store 
-  sw	a0, 0(sp)
-	 #store 
-  sw	a1, 4(sp)
-	 #store 
-  sw	a2, 8(sp)
-	 #store 
-  sw	a3, 12(sp)
-	 #store 
-  sw	a4, 16(sp)
-	 #store 
-  sw	a5, 20(sp)
-	 #store 
-  sw	a6, 24(sp)
-	 #store 
-  sw	a7, 28(sp)
-	 #load 
-  lw	t0, 0(sp)
-  sw	t0, 32(sp)
-	 #load 
-  lw	t0, 4(sp)
-  sw	t0, 36(sp)
-	 # add
-  lw	t0, 32(sp)
-  lw	t1, 36(sp)
-  add	t1, t0, t1
-  sw	t1, 40(sp)
-	 #load 
-  lw	t0, 8(sp)
-  sw	t0, 44(sp)
-	 # add
-  lw	t0, 40(sp)
-  lw	t1, 44(sp)
-  add	t1, t0, t1
-  sw	t1, 48(sp)
-	 #load 
-  lw	t0, 12(sp)
-  sw	t0, 52(sp)
-	 # add
-  lw	t0, 48(sp)
-  lw	t1, 52(sp)
-  add	t1, t0, t1
-  sw	t1, 56(sp)
-	 #load 
-  lw	t0, 16(sp)
-  sw	t0, 60(sp)
-	 # add
-  lw	t0, 56(sp)
-  lw	t1, 60(sp)
-  add	t1, t0, t1
-  sw	t1, 64(sp)
-	 #load 
-  lw	t0, 20(sp)
-  sw	t0, 68(sp)
-	 # add
-  lw	t0, 64(sp)
-  lw	t1, 68(sp)
-  add	t1, t0, t1
-  sw	t1, 72(sp)
-	 #load 
-  lw	t0, 24(sp)
-  sw	t0, 76(sp)
-	 # add
-  lw	t0, 72(sp)
-  lw	t1, 76(sp)
-  add	t1, t0, t1
-  sw	t1, 80(sp)
-	 #load 
-  lw	t0, 28(sp)
-  sw	t0, 84(sp)
-	 # add
-  lw	t0, 80(sp)
-  lw	t1, 84(sp)
-  add	t1, t0, t1
-  sw	t1, 88(sp)
-	 #ret 
-  lw	a0, 88(sp)
-  addi	sp, sp, 96
-  ret
+  .data
+  .globl n1
+n1:
+  .zero 4
 
   .text
-  .globl sum2
-sum2:
-  addi	sp, sp, -192
+  .globl QuickSort
+QuickSort:
+  addi	sp, sp, -368
+  sw	ra, 364(sp)
 	 #store 
   sw	a0, 0(sp)
 	 #store 
   sw	a1, 4(sp)
 	 #store 
   sw	a2, 8(sp)
-	 #store 
-  sw	a3, 12(sp)
-	 #store 
-  sw	a4, 16(sp)
-	 #store 
-  sw	a5, 20(sp)
-	 #store 
-  sw	a6, 24(sp)
-	 #store 
-  sw	a7, 28(sp)
-	 #store 
-  lw	t0, 192(sp)
-  sw	t0, 32(sp)
-	 #store 
-  lw	t0, 196(sp)
-  sw	t0, 36(sp)
-	 #store 
-  lw	t0, 200(sp)
-  sw	t0, 40(sp)
-	 #store 
-  lw	t0, 204(sp)
-  sw	t0, 44(sp)
-	 #store 
-  lw	t0, 208(sp)
-  sw	t0, 48(sp)
-	 #store 
-  lw	t0, 212(sp)
-  sw	t0, 52(sp)
-	 #store 
-  lw	t0, 216(sp)
-  sw	t0, 56(sp)
-	 #store 
-  lw	t0, 220(sp)
-  sw	t0, 60(sp)
-	 #load 
-  lw	t0, 0(sp)
-  sw	t0, 64(sp)
 	 #load 
   lw	t0, 4(sp)
-  sw	t0, 68(sp)
-	 # add
-  lw	t0, 64(sp)
-  lw	t1, 68(sp)
-  add	t1, t0, t1
-  sw	t1, 72(sp)
+  sw	t0, 12(sp)
 	 #load 
   lw	t0, 8(sp)
-  sw	t0, 76(sp)
-	 # add
-  lw	t0, 72(sp)
-  lw	t1, 76(sp)
-  add	t1, t0, t1
-  sw	t1, 80(sp)
-	 #load 
+  sw	t0, 16(sp)
+	 #lt 
   lw	t0, 12(sp)
-  sw	t0, 84(sp)
-	 # add
-  lw	t0, 80(sp)
-  lw	t1, 84(sp)
-  add	t1, t0, t1
-  sw	t1, 88(sp)
-	 #load 
-  lw	t0, 16(sp)
-  sw	t0, 92(sp)
-	 # add
-  lw	t0, 88(sp)
-  lw	t1, 92(sp)
-  add	t1, t0, t1
-  sw	t1, 96(sp)
-	 #load 
+  lw	t1, 16(sp)
+  slt	t1, t0, t1
+  sw	t1, 20(sp)
+	 #branch 
   lw	t0, 20(sp)
-  sw	t0, 100(sp)
-	 # add
-  lw	t0, 96(sp)
-  lw	t1, 100(sp)
-  add	t1, t0, t1
-  sw	t1, 104(sp)
+  bnez	t0, then_0
+  j	end_0
+
+then_0:
 	 #load 
-  lw	t0, 24(sp)
-  sw	t0, 108(sp)
-	 # add
-  lw	t0, 104(sp)
-  lw	t1, 108(sp)
-  add	t1, t0, t1
-  sw	t1, 112(sp)
-	 #load 
+  lw	t0, 4(sp)
+  sw	t0, 28(sp)
+	 #store 
   lw	t0, 28(sp)
-  sw	t0, 116(sp)
-	 # add
-  lw	t0, 112(sp)
-  lw	t1, 116(sp)
-  add	t1, t0, t1
-  sw	t1, 120(sp)
+  sw	t0, 24(sp)
 	 #load 
-  lw	t0, 32(sp)
-  sw	t0, 124(sp)
-	 # add
-  lw	t0, 120(sp)
-  lw	t1, 124(sp)
-  add	t1, t0, t1
-  sw	t1, 128(sp)
-	 #load 
+  lw	t0, 8(sp)
+  sw	t0, 36(sp)
+	 #store 
   lw	t0, 36(sp)
-  sw	t0, 132(sp)
-	 # add
-  lw	t0, 128(sp)
-  lw	t1, 132(sp)
-  add	t1, t0, t1
-  sw	t1, 136(sp)
+  sw	t0, 32(sp)
 	 #load 
-  lw	t0, 40(sp)
-  sw	t0, 140(sp)
-	 # add
-  lw	t0, 136(sp)
-  lw	t1, 140(sp)
-  add	t1, t0, t1
-  sw	t1, 144(sp)
+  lw	t0, 0(sp)
+  sw	t0, 44(sp)
 	 #load 
+  lw	t0, 4(sp)
+  sw	t0, 48(sp)
+	 #getptr 
   lw	t0, 44(sp)
-  sw	t0, 148(sp)
-	 # add
-  lw	t0, 144(sp)
-  lw	t1, 148(sp)
-  add	t1, t0, t1
-  sw	t1, 152(sp)
-	 #load 
-  lw	t0, 48(sp)
-  sw	t0, 156(sp)
-	 # add
-  lw	t0, 152(sp)
-  lw	t1, 156(sp)
-  add	t1, t0, t1
-  sw	t1, 160(sp)
+  lw	t1, 48(sp)
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 52(sp)
 	 #load 
   lw	t0, 52(sp)
-  sw	t0, 164(sp)
-	 # add
-  lw	t0, 160(sp)
-  lw	t1, 164(sp)
-  add	t1, t0, t1
-  sw	t1, 168(sp)
-	 #load 
+  lw	t0, 0(t0)
+  sw	t0, 56(sp)
+	 #store 
   lw	t0, 56(sp)
-  sw	t0, 172(sp)
+  sw	t0, 40(sp)
+	 #jump 
+  j	while_cond_0
+
+end_0:
+	 #ret 
+  li	a0, 0
+  addi	sp, sp, 368
+  ret
+while_cond_0:
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 60(sp)
+	 #load 
+  lw	t0, 32(sp)
+  sw	t0, 64(sp)
+	 #lt 
+  lw	t0, 60(sp)
+  lw	t1, 64(sp)
+  slt	t1, t0, t1
+  sw	t1, 68(sp)
+	 #branch 
+  lw	t0, 68(sp)
+  bnez	t0, while_body_0
+  j	while_end_0
+
+while_body_0:
+	 #jump 
+  j	while_cond_1
+
+while_end_0:
+	 #load 
+  lw	t0, 40(sp)
+  sw	t0, 72(sp)
+	 #load 
+  lw	t0, 0(sp)
+  sw	t0, 76(sp)
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 80(sp)
+	 #getptr 
+  lw	t0, 76(sp)
+  lw	t1, 80(sp)
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 84(sp)
+	 #store 
+  lw	t0, 72(sp)
+  lw	t1, 84(sp)
+  sw	t0, 0(t1)
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 92(sp)
+	 # sub
+  lw	t0, 92(sp)
+  li	t1, 1
+  sub	t1, t0, t1
+  sw	t1, 96(sp)
+	 #store 
+  lw	t0, 96(sp)
+  sw	t0, 88(sp)
+	 #load 
+  lw	t0, 0(sp)
+  sw	t0, 100(sp)
+	 #load 
+  lw	t0, 4(sp)
+  sw	t0, 104(sp)
+	 #load 
+  lw	t0, 88(sp)
+  sw	t0, 108(sp)
+	 #call 
+  lw	a0, 100(sp)
+  lw	a1, 104(sp)
+  lw	a2, 108(sp)
+  call	QuickSort
+  sw	a0, 112(sp)
+	 #store 
+  lw	t0, 112(sp)
+  sw	t0, 88(sp)
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 116(sp)
 	 # add
+  lw	t0, 116(sp)
+  li	t1, 1
+  add	t1, t0, t1
+  sw	t1, 120(sp)
+	 #store 
+  lw	t0, 120(sp)
+  sw	t0, 88(sp)
+	 #load 
+  lw	t0, 0(sp)
+  sw	t0, 124(sp)
+	 #load 
+  lw	t0, 88(sp)
+  sw	t0, 128(sp)
+	 #load 
+  lw	t0, 8(sp)
+  sw	t0, 132(sp)
+	 #call 
+  lw	a0, 124(sp)
+  lw	a1, 128(sp)
+  lw	a2, 132(sp)
+  call	QuickSort
+  sw	a0, 136(sp)
+	 #store 
+  lw	t0, 136(sp)
+  sw	t0, 88(sp)
+	 #jump 
+  j	end_0
+
+while_cond_1:
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 148(sp)
+	 #load 
+  lw	t0, 32(sp)
+  sw	t0, 152(sp)
+	 #lt 
+  lw	t0, 148(sp)
+  lw	t1, 152(sp)
+  slt	t1, t0, t1
+  sw	t1, 156(sp)
+  # eq
+  lw	t1, 156(sp)
+  xor	t1, x0, t1
+  seqz	t1, t1
+  sw	t1, 160(sp)
+	 #store 
+  li	t0, 0
+  sw	t0, 140(sp)
+	 #branch 
+  lw	t0, 160(sp)
+  bnez	t0, and_end_2
+  j	and_right_2
+
+and_end_2:
+	 #load 
+  lw	t0, 140(sp)
+  sw	t0, 164(sp)
+	 #branch 
+  lw	t0, 164(sp)
+  bnez	t0, while_body_1
+  j	while_end_1
+
+and_right_2:
+	 #load 
+  lw	t0, 0(sp)
+  sw	t0, 168(sp)
+	 #load 
+  lw	t0, 32(sp)
+  sw	t0, 172(sp)
+	 #getptr 
   lw	t0, 168(sp)
   lw	t1, 172(sp)
-  add	t1, t0, t1
-  sw	t1, 176(sp)
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 176(sp)
 	 #load 
-  lw	t0, 60(sp)
-  sw	t0, 180(sp)
-	 # add
   lw	t0, 176(sp)
-  lw	t1, 180(sp)
+  lw	t0, 0(t0)
+  sw	t0, 180(sp)
+	 #load 
+  lw	t0, 40(sp)
+  sw	t0, 184(sp)
+	 # sub
+  lw	t0, 184(sp)
+  li	t1, 1
+  sub	t1, t0, t1
+  sw	t1, 188(sp)
+	 #gt 
+  lw	t0, 180(sp)
+  lw	t1, 188(sp)
+  slt	t1, t1, t0
+  sw	t1, 192(sp)
+  # or
+  lw	t1, 192(sp)
+  xor	t1, x0, t1
+  snez	t1, t1
+  sw	t1, 196(sp)
+	 #store 
+  lw	t0, 196(sp)
+  sw	t0, 140(sp)
+	 #jump 
+  j	and_end_2
+
+while_body_1:
+	 #load 
+  lw	t0, 32(sp)
+  sw	t0, 200(sp)
+	 # sub
+  lw	t0, 200(sp)
+  li	t1, 1
+  sub	t1, t0, t1
+  sw	t1, 204(sp)
+	 #store 
+  lw	t0, 204(sp)
+  sw	t0, 32(sp)
+	 #jump 
+  j	while_cond_1
+
+while_end_1:
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 208(sp)
+	 #load 
+  lw	t0, 32(sp)
+  sw	t0, 212(sp)
+	 #lt 
+  lw	t0, 208(sp)
+  lw	t1, 212(sp)
+  slt	t1, t0, t1
+  sw	t1, 216(sp)
+	 #branch 
+  lw	t0, 216(sp)
+  bnez	t0, then_1
+  j	end_1
+
+then_1:
+	 #load 
+  lw	t0, 0(sp)
+  sw	t0, 220(sp)
+	 #load 
+  lw	t0, 32(sp)
+  sw	t0, 224(sp)
+	 #getptr 
+  lw	t0, 220(sp)
+  lw	t1, 224(sp)
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 228(sp)
+	 #load 
+  lw	t0, 228(sp)
+  lw	t0, 0(t0)
+  sw	t0, 232(sp)
+	 #load 
+  lw	t0, 0(sp)
+  sw	t0, 236(sp)
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 240(sp)
+	 #getptr 
+  lw	t0, 236(sp)
+  lw	t1, 240(sp)
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 244(sp)
+	 #store 
+  lw	t0, 232(sp)
+  lw	t1, 244(sp)
+  sw	t0, 0(t1)
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 248(sp)
+	 # add
+  lw	t0, 248(sp)
+  li	t1, 1
   add	t1, t0, t1
-  sw	t1, 184(sp)
-	 #ret 
-  lw	a0, 184(sp)
-  addi	sp, sp, 192
-  ret
+  sw	t1, 252(sp)
+	 #store 
+  lw	t0, 252(sp)
+  sw	t0, 24(sp)
+	 #jump 
+  j	end_1
+
+end_1:
+	 #jump 
+  j	while_cond_2
+
+while_cond_2:
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 256(sp)
+	 #load 
+  lw	t0, 32(sp)
+  sw	t0, 260(sp)
+	 #lt 
+  lw	t0, 256(sp)
+  lw	t1, 260(sp)
+  slt	t1, t0, t1
+  sw	t1, 264(sp)
+  # eq
+  lw	t1, 264(sp)
+  xor	t1, x0, t1
+  seqz	t1, t1
+  sw	t1, 268(sp)
+	 #store 
+  li	t0, 0
+  sw	t0, 140(sp)
+	 #branch 
+  lw	t0, 268(sp)
+  bnez	t0, and_end_3
+  j	and_right_3
+
+and_end_3:
+	 #load 
+  lw	t0, 140(sp)
+  sw	t0, 272(sp)
+	 #branch 
+  lw	t0, 272(sp)
+  bnez	t0, while_body_2
+  j	while_end_2
+
+and_right_3:
+	 #load 
+  lw	t0, 0(sp)
+  sw	t0, 276(sp)
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 280(sp)
+	 #getptr 
+  lw	t0, 276(sp)
+  lw	t1, 280(sp)
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 284(sp)
+	 #load 
+  lw	t0, 284(sp)
+  lw	t0, 0(t0)
+  sw	t0, 288(sp)
+	 #load 
+  lw	t0, 40(sp)
+  sw	t0, 292(sp)
+	 #lt 
+  lw	t0, 288(sp)
+  lw	t1, 292(sp)
+  slt	t1, t0, t1
+  sw	t1, 296(sp)
+  # or
+  lw	t1, 296(sp)
+  xor	t1, x0, t1
+  snez	t1, t1
+  sw	t1, 300(sp)
+	 #store 
+  lw	t0, 300(sp)
+  sw	t0, 140(sp)
+	 #jump 
+  j	and_end_3
+
+while_body_2:
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 304(sp)
+	 # add
+  lw	t0, 304(sp)
+  li	t1, 1
+  add	t1, t0, t1
+  sw	t1, 308(sp)
+	 #store 
+  lw	t0, 308(sp)
+  sw	t0, 24(sp)
+	 #jump 
+  j	while_cond_2
+
+while_end_2:
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 312(sp)
+	 #load 
+  lw	t0, 32(sp)
+  sw	t0, 316(sp)
+	 #lt 
+  lw	t0, 312(sp)
+  lw	t1, 316(sp)
+  slt	t1, t0, t1
+  sw	t1, 320(sp)
+	 #branch 
+  lw	t0, 320(sp)
+  bnez	t0, then_2
+  j	end_2
+
+then_2:
+	 #load 
+  lw	t0, 0(sp)
+  sw	t0, 324(sp)
+	 #load 
+  lw	t0, 24(sp)
+  sw	t0, 328(sp)
+	 #getptr 
+  lw	t0, 324(sp)
+  lw	t1, 328(sp)
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 332(sp)
+	 #load 
+  lw	t0, 332(sp)
+  lw	t0, 0(t0)
+  sw	t0, 336(sp)
+	 #load 
+  lw	t0, 0(sp)
+  sw	t0, 340(sp)
+	 #load 
+  lw	t0, 32(sp)
+  sw	t0, 344(sp)
+	 #getptr 
+  lw	t0, 340(sp)
+  lw	t1, 344(sp)
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 348(sp)
+	 #store 
+  lw	t0, 336(sp)
+  lw	t1, 348(sp)
+  sw	t0, 0(t1)
+	 #load 
+  lw	t0, 32(sp)
+  sw	t0, 352(sp)
+	 # sub
+  lw	t0, 352(sp)
+  li	t1, 1
+  sub	t1, t0, t1
+  sw	t1, 356(sp)
+	 #store 
+  lw	t0, 356(sp)
+  sw	t0, 32(sp)
+	 #jump 
+  j	end_2
+
+end_2:
+	 #jump 
+  j	while_cond_0
+
 
   .text
   .globl main
 main:
-  addi	sp, sp, -64
-  sw	ra, 60(sp)
-	 #call 
-  li	a0, 1
-  li	a1, 2
-  li	a2, 3
-  li	a3, 4
-  li	a4, 5
-  li	a5, 6
-  li	a6, 7
-  li	a7, 8
-  call	sum
-  sw	a0, 36(sp)
+  addi	sp, sp, -160
+  sw	ra, 156(sp)
 	 #store 
-  lw	t0, 36(sp)
-  sw	t0, 32(sp)
-	 #call 
-  li	a0, 1
-  li	a1, 2
-  li	a2, 3
-  li	a3, 4
-  li	a4, 5
-  li	a5, 6
-  li	a6, 7
-  li	a7, 8
-  li	t0, 9
-  sw	t0, 0(sp)
   li	t0, 10
-  sw	t0, 4(sp)
-  li	t0, 11
-  sw	t0, 8(sp)
-  li	t0, 12
-  sw	t0, 12(sp)
-  li	t0, 13
-  sw	t0, 16(sp)
-  li	t0, 14
-  sw	t0, 20(sp)
-  li	t0, 15
-  sw	t0, 24(sp)
-  li	t0, 16
-  sw	t0, 28(sp)
-  call	sum2
-  sw	a0, 44(sp)
-	 #store 
-  lw	t0, 44(sp)
+  la	t1, n1
+  sw	t0, 0(t1)
+	 #getelemptr 
+  addi	t0, sp, 0
   sw	t0, 40(sp)
-	 #load 
-  lw	t0, 32(sp)
+	 #store 
+  li	t0, 4
+  lw	t1, 40(sp)
+  sw	t0, 0(t1)
+	 #getelemptr 
+  addi	t0, sp, 0
+  li	t1, 1
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 44(sp)
+	 #store 
+  li	t0, 3
+  lw	t1, 44(sp)
+  sw	t0, 0(t1)
+	 #getelemptr 
+  addi	t0, sp, 0
+  li	t1, 2
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
   sw	t0, 48(sp)
-	 #load 
-  lw	t0, 40(sp)
+	 #store 
+  li	t0, 9
+  lw	t1, 48(sp)
+  sw	t0, 0(t1)
+	 #getelemptr 
+  addi	t0, sp, 0
+  li	t1, 3
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
   sw	t0, 52(sp)
-	 # add
-  lw	t0, 48(sp)
+	 #store 
+  li	t0, 2
   lw	t1, 52(sp)
+  sw	t0, 0(t1)
+	 #getelemptr 
+  addi	t0, sp, 0
+  li	t1, 4
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 56(sp)
+	 #store 
+  li	t0, 0
+  lw	t1, 56(sp)
+  sw	t0, 0(t1)
+	 #getelemptr 
+  addi	t0, sp, 0
+  li	t1, 5
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 60(sp)
+	 #store 
+  li	t0, 1
+  lw	t1, 60(sp)
+  sw	t0, 0(t1)
+	 #getelemptr 
+  addi	t0, sp, 0
+  li	t1, 6
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 64(sp)
+	 #store 
+  li	t0, 6
+  lw	t1, 64(sp)
+  sw	t0, 0(t1)
+	 #getelemptr 
+  addi	t0, sp, 0
+  li	t1, 7
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 68(sp)
+	 #store 
+  li	t0, 5
+  lw	t1, 68(sp)
+  sw	t0, 0(t1)
+	 #getelemptr 
+  addi	t0, sp, 0
+  li	t1, 8
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 72(sp)
+	 #store 
+  li	t0, 7
+  lw	t1, 72(sp)
+  sw	t0, 0(t1)
+	 #getelemptr 
+  addi	t0, sp, 0
+  li	t1, 9
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 76(sp)
+	 #store 
+  li	t0, 8
+  lw	t1, 76(sp)
+  sw	t0, 0(t1)
+	 #store 
+  li	t0, 0
+  sw	t0, 80(sp)
+	 #store 
+  li	t0, 9
+  sw	t0, 84(sp)
+	 #getelemptr 
+  addi	t0, sp, 0
+  sw	t0, 88(sp)
+	 #load 
+  lw	t0, 80(sp)
+  sw	t0, 92(sp)
+	 #load 
+  lw	t0, 84(sp)
+  sw	t0, 96(sp)
+	 #call 
+  lw	a0, 88(sp)
+  lw	a1, 92(sp)
+  lw	a2, 96(sp)
+  call	QuickSort
+  sw	a0, 100(sp)
+	 #store 
+  lw	t0, 100(sp)
+  sw	t0, 80(sp)
+	 #jump 
+  j	while_cond_3
+
+while_cond_3:
+	 #load 
+  lw	t0, 80(sp)
+  sw	t0, 104(sp)
+	 #load 
+  la	t0, n1
+  lw	t0, 0(t0)
+  sw	t0, 108(sp)
+	 #lt 
+  lw	t0, 104(sp)
+  lw	t1, 108(sp)
+  slt	t1, t0, t1
+  sw	t1, 112(sp)
+	 #branch 
+  lw	t0, 112(sp)
+  bnez	t0, while_body_3
+  j	while_end_3
+
+while_body_3:
+	 #load 
+  lw	t0, 80(sp)
+  sw	t0, 120(sp)
+	 #getelemptr 
+  addi	t0, sp, 0
+  lw	t1, 120(sp)
+  li	t2, 4
+  mul	t1, t1, t2
+  add	t0, t0, t1
+  sw	t0, 124(sp)
+	 #load 
+  lw	t0, 124(sp)
+  lw	t0, 0(t0)
+  sw	t0, 128(sp)
+	 #store 
+  lw	t0, 128(sp)
+  sw	t0, 116(sp)
+	 #load 
+  lw	t0, 116(sp)
+  sw	t0, 132(sp)
+	 #call 
+  lw	a0, 132(sp)
+  call	putint
+	 #store 
+  li	t0, 10
+  sw	t0, 116(sp)
+	 #load 
+  lw	t0, 116(sp)
+  sw	t0, 136(sp)
+	 #call 
+  lw	a0, 136(sp)
+  call	putch
+	 #load 
+  lw	t0, 80(sp)
+  sw	t0, 140(sp)
+	 # add
+  lw	t0, 140(sp)
+  li	t1, 1
   add	t1, t0, t1
-  sw	t1, 56(sp)
+  sw	t1, 144(sp)
+	 #store 
+  lw	t0, 144(sp)
+  sw	t0, 80(sp)
+	 #jump 
+  j	while_cond_3
+
+while_end_3:
 	 #ret 
-  lw	a0, 56(sp)
-  lw	ra, 60(sp)
-  addi	sp, sp, 64
+  li	a0, 0
+  lw	ra, 156(sp)
+  addi	sp, sp, 160
   ret
 

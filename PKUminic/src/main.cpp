@@ -48,7 +48,7 @@ int main(int argc, char const *argv[])
 
     if (string(mode) == "-koopa")
     { //输出为koopa模式
-        cout << irstr << endl;
+        // cout << irstr << endl;
         //写入对应文件
         write_file(output, irstr);
         return 0;
